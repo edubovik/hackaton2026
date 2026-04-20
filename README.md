@@ -10,6 +10,7 @@ A classic web-based chat server supporting real-time messaging, public and priva
 | 1 | User registration & authentication (JWT) | ✅ |
 | 2 | Presence (online / AFK / offline via WebSocket) | ✅ |
 | 3 | Contacts / Friends (requests, friends list, bans) | ✅ |
+| 4 | Chat Rooms (catalog, join/leave, roles, moderation, invitations) | ✅ |
 
 ## Stack
 
@@ -85,6 +86,31 @@ npm test
 Real-time notifications are pushed to `/queue/user.{id}` on WebSocket:
 - `FRIEND_REQUEST` — when someone sends you a request
 - `FRIEND_ACCEPTED` — when your request is accepted
+
+## Rooms API (Phase 4)
+
+| Method | Path | Description |
+|---|---|---|
+| POST | `/api/v1/rooms` | Create room `{name, description, isPublic}` |
+| GET | `/api/v1/rooms?search=&page=&size=` | Public catalog (paginated) |
+| GET | `/api/v1/rooms/{id}` | Room detail (members must be member for private) |
+| PUT | `/api/v1/rooms/{id}` | Update room settings (owner only) |
+| DELETE | `/api/v1/rooms/{id}` | Delete room (owner only) |
+| POST | `/api/v1/rooms/{id}/join` | Join public room |
+| DELETE | `/api/v1/rooms/{id}/leave` | Leave room (owner cannot) |
+| GET | `/api/v1/rooms/{id}/members` | List members |
+| POST | `/api/v1/rooms/{id}/members/{userId}/ban` | Ban member (admin+) |
+| DELETE | `/api/v1/rooms/{id}/members/{userId}/ban` | Unban member (admin+) |
+| GET | `/api/v1/rooms/{id}/bans` | List bans (admin+) |
+| POST | `/api/v1/rooms/{id}/admins/{userId}` | Promote to admin (owner only) |
+| DELETE | `/api/v1/rooms/{id}/admins/{userId}` | Demote admin (owner only) |
+| POST | `/api/v1/rooms/{id}/invitations` | Invite user `{username}` |
+| POST | `/api/v1/rooms/{id}/invitations/accept` | Accept invitation |
+
+Real-time member events are broadcast to `/topic/room.{id}.members`:
+- `JOIN` — user joined
+- `LEAVE` — user left
+- `BAN` — user was banned
 
 ## Project structure
 

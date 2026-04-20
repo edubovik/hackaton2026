@@ -1,0 +1,28 @@
+.item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #eee;
+  list-style: none;
+}
+
+.name {
+  font-weight: bold;
+  background: none;
+  border: none;
+  cursor: pointer;
+  flex: 1;
+  text-align: left;
+}
+
+.desc {
+  color: #666;
+  font-size: 0.85rem;
+  flex: 2;
+}
+
+.join {
+  padding: 0.2rem 0.6rem;
+  cursor: pointer;
+}
