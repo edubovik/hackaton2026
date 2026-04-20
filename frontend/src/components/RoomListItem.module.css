@@ -22,6 +22,19 @@
   flex: 2;
 }
 
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.count {
+  font-size: 0.8rem;
+  color: #999;
+  white-space: nowrap;
+}
+
 .join {
   padding: 0.2rem 0.6rem;
   cursor: pointer;

@@ -126,6 +126,26 @@ class RoomControllerIntegrationTest {
     }
 
     @Test
+    void getMyRoomsReturnsJoinedRooms() {
+        int n = seq.incrementAndGet();
+        String ownerCookie = registerAndLogin("owner" + n + "@t.com", "owner" + n);
+        String memberCookie = registerAndLogin("member" + n + "@t.com", "member" + n);
+
+        post("/api/v1/rooms", new CreateRoomRequest("MyRoom" + n, null, true), RoomSummaryDto.class, ownerCookie);
+        ResponseEntity<RoomSummaryDto> room2 = post(
+                "/api/v1/rooms", new CreateRoomRequest("MyRoom2" + n, null, true), RoomSummaryDto.class, ownerCookie);
+        post("/api/v1/rooms/" + room2.getBody().id() + "/join", null, Void.class, memberCookie);
+
+        ResponseEntity<RoomSummaryDto[]> myRooms = get("/api/v1/rooms/my", RoomSummaryDto[].class, ownerCookie);
+        assertThat(myRooms.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(myRooms.getBody()).hasSize(2);
+
+        ResponseEntity<RoomSummaryDto[]> memberRooms = get("/api/v1/rooms/my", RoomSummaryDto[].class, memberCookie);
+        assertThat(memberRooms.getBody()).hasSize(1);
+        assertThat(memberRooms.getBody()[0].name()).isEqualTo("MyRoom2" + n);
+    }
+
+    @Test
     void privateRoomNotInCatalog() {
         int n = seq.incrementAndGet();
         String ownerCookie = registerAndLogin("owner" + n + "@t.com", "owner" + n);

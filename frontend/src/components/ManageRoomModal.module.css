@@ -133,6 +133,22 @@
   cursor: pointer;
 }
 
+.banInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.banUsername {
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.banMeta {
+  font-size: 0.75rem;
+  color: #888;
+}
+
 .error {
   color: #c00;
   font-size: 0.85rem;

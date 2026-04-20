@@ -29,13 +29,50 @@
   padding: 0.3rem 0;
 }
 
-.username {
+.info {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.username {
   font-size: 0.9rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .role {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: #888;
   text-transform: lowercase;
+}
+
+.addFriendBtn {
+  background: none;
+  border: 1px solid #aaa;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+  color: #555;
+  padding: 0;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.addFriendBtn:hover:not(:disabled) {
+  border-color: #1976d2;
+  color: #1976d2;
+}
+
+.addFriendBtn:disabled {
+  color: #4caf50;
+  border-color: #4caf50;
+  cursor: default;
 }

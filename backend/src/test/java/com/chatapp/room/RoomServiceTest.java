@@ -14,8 +14,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import com.chatapp.common.BrokerTemplate;
 
+import com.chatapp.room.dto.RoomSummaryDto;
+
+import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -98,6 +102,20 @@ class RoomServiceTest {
                 .isInstanceOf(ForbiddenException.class);
 
         verify(roomRepository, never()).delete(any());
+    }
+
+    @Test
+    void getMyRooms_returnsRoomsForUser() {
+        Room room1 = makeRoom(10L, owner, true);
+        Room room2 = makeRoom(11L, alice, false);
+        RoomMember m1 = new RoomMember(room1, owner, RoomMemberRole.OWNER);
+        RoomMember m2 = new RoomMember(room2, owner, RoomMemberRole.MEMBER);
+        when(roomMemberRepository.findByUser_Id(owner.getId())).thenReturn(List.of(m1, m2));
+
+        List<RoomSummaryDto> result = service.getMyRooms(owner);
+
+        assertThat(result).hasSize(2);
+        assertThat(result).extracting(RoomSummaryDto::id).containsExactlyInAnyOrder(10L, 11L);
     }
 
     @Test

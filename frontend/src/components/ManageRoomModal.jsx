@@ -32,24 +32,24 @@ export function ManageRoomModal({ room, currentUserId, isOwner, onClose, onDelet
 
   useEffect(() => { loadData(); }, [room.id]);
 
-  async function handleBan(userId) {
-    await banMember(room.id, userId);
-    await loadData();
+  async function handleBan(userId, username) {
+    if (!window.confirm(`Ban "${username}" from this room?`)) return;
+    try { await banMember(room.id, userId); await loadData(); } catch (err) { setError(err.message); }
   }
 
-  async function handleUnban(userId) {
-    await unbanMember(room.id, userId);
-    await loadData();
+  async function handleUnban(userId, username) {
+    if (!window.confirm(`Unban "${username}"?`)) return;
+    try { await unbanMember(room.id, userId); await loadData(); } catch (err) { setError(err.message); }
   }
 
-  async function handlePromote(userId) {
-    await promoteAdmin(room.id, userId);
-    await loadData();
+  async function handlePromote(userId, username) {
+    if (!window.confirm(`Make "${username}" an admin?`)) return;
+    try { await promoteAdmin(room.id, userId); await loadData(); } catch (err) { setError(err.message); }
   }
 
-  async function handleDemote(userId) {
-    await demoteAdmin(room.id, userId);
-    await loadData();
+  async function handleDemote(userId, username) {
+    if (!window.confirm(`Remove admin from "${username}"?`)) return;
+    try { await demoteAdmin(room.id, userId); await loadData(); } catch (err) { setError(err.message); }
   }
 
   async function handleInvite(e) {
@@ -111,9 +111,9 @@ export function ManageRoomModal({ room, currentUserId, isOwner, onClose, onDelet
                   <span>{m.username}</span>
                   <div className={styles.actions}>
                     {isOwner && (
-                      <button onClick={() => handlePromote(m.userId)}>Make Admin</button>
+                      <button onClick={() => handlePromote(m.userId, m.username)}>Make Admin</button>
                     )}
-                    <button onClick={() => handleBan(m.userId)}>Ban</button>
+                    <button onClick={() => handleBan(m.userId, m.username)}>Ban</button>
                   </div>
                 </li>
               ))}
@@ -127,7 +127,7 @@ export function ManageRoomModal({ room, currentUserId, isOwner, onClose, onDelet
                 <li key={m.userId} className={styles.row}>
                   <span>{m.username} <em>({m.role.toLowerCase()})</em></span>
                   {isOwner && m.role === 'ADMIN' && (
-                    <button onClick={() => handleDemote(m.userId)}>Demote</button>
+                    <button onClick={() => handleDemote(m.userId, m.username)}>Demote</button>
                   )}
                 </li>
               ))}
@@ -138,8 +138,13 @@ export function ManageRoomModal({ room, currentUserId, isOwner, onClose, onDelet
             <ul className={styles.list}>
               {bans.map(b => (
                 <li key={b.userId} className={styles.row}>
-                  <span>{b.username}</span>
-                  <button onClick={() => handleUnban(b.userId)}>Unban</button>
+                  <div className={styles.banInfo}>
+                    <span className={styles.banUsername}>{b.username}</span>
+                    <span className={styles.banMeta}>
+                      banned by {b.bannedByUsername} · {new Date(b.createdAt).toLocaleDateString()}
+                    </span>
+                  </div>
+                  <button onClick={() => handleUnban(b.userId, b.username)}>Unban</button>
                 </li>
               ))}
               {bans.length === 0 && <li className={styles.empty}>No bans</li>}
