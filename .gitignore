@@ -33,6 +33,10 @@ node_modules/
 dist/
 .vite/
 
+# Playwright
+playwright-report/
+test-results/
+
 # macOS
 .DS_Store
 

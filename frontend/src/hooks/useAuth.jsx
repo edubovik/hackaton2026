@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import { flushSync } from 'react-dom';
 import { login as apiLogin, logout as apiLogout, register as apiRegister, getMe } from '../api/auth';
 
 const AuthContext = createContext(null);
@@ -18,7 +19,9 @@ export function AuthProvider({ children }) {
   async function login(email, password, keepMeSignedIn) {
     await apiLogin(email, password, keepMeSignedIn);
     const profile = await getMe();
-    setUser(profile);
+    // flushSync ensures state is committed before the caller navigates,
+    // preventing ProtectedRoute from seeing user=null and redirecting to /signin
+    flushSync(() => setUser(profile));
   }
 
   async function register(email, username, password) {
