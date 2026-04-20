@@ -1,15 +1,24 @@
 import { Client } from '@stomp/stompjs';
 
 let client = null;
+let connected = false;
+const connectionListeners = new Set();
+
+function setConnected(value) {
+  connected = value;
+  connectionListeners.forEach((cb) => cb(value));
+}
 
 const WS_URL = import.meta.env.VITE_WS_URL || 'ws://localhost:8080/ws';
 
-export function connect(onConnect, onDisconnect) {
+export function connect() {
+  if (client) return;
   client = new Client({
     brokerURL: WS_URL,
     reconnectDelay: 5000,
-    onConnect: () => onConnect && onConnect(),
-    onDisconnect: () => onDisconnect && onDisconnect(),
+    onConnect: () => setConnected(true),
+    onDisconnect: () => setConnected(false),
+    onStompError: () => setConnected(false),
   });
   client.activate();
 }
@@ -19,6 +28,16 @@ export function disconnect() {
     client.deactivate();
     client = null;
   }
+  setConnected(false);
+}
+
+export function onConnectionChange(cb) {
+  connectionListeners.add(cb);
+  return () => connectionListeners.delete(cb);
+}
+
+export function isConnected() {
+  return connected;
 }
 
 export function subscribe(destination, callback) {

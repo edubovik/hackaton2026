@@ -1,12 +1,17 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { fetchRoomHistory, fetchDmHistory } from '../api/messages';
-import { subscribeRoom, subscribeDm } from '../api/socket';
+import { subscribeRoom, subscribeDm, onConnectionChange, isConnected } from '../api/socket';
 
 export function useMessages({ roomId, partnerId, currentUserId }) {
   const [messages, setMessages] = useState([]);
   const [hasMore, setHasMore] = useState(false);
   const [loading, setLoading] = useState(false);
   const oldestIdRef = useRef(null);
+  const [socketConnected, setSocketConnected] = useState(isConnected);
+
+  useEffect(() => {
+    return onConnectionChange(setSocketConnected);
+  }, []);
 
   const upsertMessage = useCallback((msg) => {
     setMessages((prev) => {
@@ -26,39 +31,35 @@ export function useMessages({ roomId, partnerId, currentUserId }) {
       const page = roomId
         ? await fetchRoomHistory(roomId, cursor)
         : await fetchDmHistory(partnerId, cursor);
-      // history arrives newest-first; reverse to oldest-first for display
       const older = [...page.messages].reverse();
       setMessages((prev) => [...older, ...prev]);
       setHasMore(page.hasMore);
-      if (older.length > 0) {
-        oldestIdRef.current = older[0].id;
-      }
+      if (older.length > 0) oldestIdRef.current = older[0].id;
     } finally {
       setLoading(false);
     }
   }, [roomId, partnerId]);
 
-  // Initial load and subscription
+  // Load history when conversation changes
   useEffect(() => {
     if (!roomId && !partnerId) return;
     setMessages([]);
     setHasMore(false);
     oldestIdRef.current = null;
     loadHistory(null);
+  }, [roomId, partnerId, loadHistory]);
 
-    let sub;
-    if (roomId) {
-      sub = subscribeRoom(roomId, upsertMessage);
-    } else {
-      sub = subscribeDm(currentUserId, upsertMessage);
-    }
+  // Subscribe only when socket is connected; re-subscribes automatically on reconnect
+  useEffect(() => {
+    if ((!roomId && !partnerId) || !socketConnected) return;
+    const sub = roomId
+      ? subscribeRoom(roomId, upsertMessage)
+      : subscribeDm(currentUserId, upsertMessage);
     return () => sub && sub.unsubscribe();
-  }, [roomId, partnerId, currentUserId, loadHistory, upsertMessage]);
+  }, [roomId, partnerId, currentUserId, socketConnected, upsertMessage]);
 
   const loadMore = useCallback(() => {
-    if (!loading && hasMore) {
-      loadHistory(oldestIdRef.current);
-    }
+    if (!loading && hasMore) loadHistory(oldestIdRef.current);
   }, [loading, hasMore, loadHistory]);
 
   return { messages, hasMore, loading, loadMore };

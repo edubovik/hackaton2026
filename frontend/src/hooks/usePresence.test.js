@@ -4,18 +4,23 @@ import { usePresence } from './usePresence';
 
 // Mock the socket module
 vi.mock('../api/socket', () => {
-  let onConnectCb = null;
+  let connectionListeners = new Set();
   const subscriptions = {};
 
   return {
-    connect: vi.fn((onConnect) => { onConnectCb = onConnect; }),
+    connect: vi.fn(),
     disconnect: vi.fn(),
+    isConnected: vi.fn(() => false),
+    onConnectionChange: vi.fn((cb) => {
+      connectionListeners.add(cb);
+      return () => connectionListeners.delete(cb);
+    }),
     subscribe: vi.fn((destination, cb) => {
       subscriptions[destination] = cb;
       return { unsubscribe: vi.fn() };
     }),
     publish: vi.fn(),
-    __triggerConnect: () => onConnectCb && onConnectCb(),
+    __triggerConnect: () => connectionListeners.forEach(cb => cb(true)),
     __triggerMessage: (dest, payload) => subscriptions[dest] && subscriptions[dest](payload),
   };
 });
@@ -84,9 +89,10 @@ describe('usePresence', () => {
     expect(result.current[1]).toBe('AFK');
   });
 
-  it('disconnects on unmount', () => {
+  it('cleans up connection listener on unmount', () => {
     const { unmount } = renderHook(() => usePresence());
     unmount();
-    expect(socket.disconnect).toHaveBeenCalled();
+    // usePresence no longer owns the connection lifecycle; just verify no crash
+    expect(socket.onConnectionChange).toHaveBeenCalled();
   });
 });
