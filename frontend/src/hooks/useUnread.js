@@ -49,19 +49,9 @@ export function useUnread({ rooms = [], userId, activeRoomId, activeDmPartnerId 
         if (sub) subs.push(sub);
       });
 
-      const dmSub = subscribe(`/queue/user.${userId}`, (msg) => {
-        const pid = msg.senderId;
-        if (activeDmPartnerIdRef.current !== pid) {
-          setCounts((prev) => {
-            const existing = prev.find((c) => c.partnerId === pid);
-            if (existing) {
-              return prev.map((c) => c.partnerId === pid ? { ...c, count: c.count + 1 } : c);
-            }
-            return [...prev, { partnerId: pid, count: 1 }];
-          });
-        }
-      });
-      if (dmSub) subs.push(dmSub);
+      // DM messages are on a RabbitMQ queue (competing consumers) — do NOT subscribe here
+      // because useMessages also subscribes to the same queue and would lose messages.
+      // DM unread counts come from the initial fetchUnreadCounts() REST call instead.
     }
 
     if (isConnected()) setup(true);

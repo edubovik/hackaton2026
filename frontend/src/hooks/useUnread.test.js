@@ -70,26 +70,11 @@ describe('useUnread', () => {
     expect(result.current.getCountForRoom(10)).toBe(0);
   });
 
-  it('bumps DM count when message arrives from non-active partner', async () => {
-    const { result } = renderHook(() =>
-      useUnread({ rooms, userId: 1, activeDmPartnerId: null })
-    );
-
+  it('does not subscribe to DM queue (avoids competing with useMessages)', async () => {
+    renderHook(() => useUnread({ rooms, userId: 1 }));
     act(() => socket.__triggerConnect());
-    act(() => socket.__triggerMessage('/queue/user.1', { senderId: 42 }));
-
-    await waitFor(() => expect(result.current.getCountForDm(42)).toBe(1));
-  });
-
-  it('does not bump DM count for the active partner', async () => {
-    const { result } = renderHook(() =>
-      useUnread({ rooms, userId: 1, activeDmPartnerId: 42 })
-    );
-
-    act(() => socket.__triggerConnect());
-    act(() => socket.__triggerMessage('/queue/user.1', { senderId: 42 }));
-
-    expect(result.current.getCountForDm(42)).toBe(0);
+    const subscribedDestinations = socket.subscribe.mock.calls.map(([dest]) => dest);
+    expect(subscribedDestinations).not.toContain('/queue/user.1');
   });
 
   it('clearRoom removes count and marks read', async () => {
