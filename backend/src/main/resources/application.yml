@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: chatapp
+  datasource:
+    url: jdbc:postgresql://localhost:5432/chatapp_dev
+    username: chatapp
+    password: chatapp
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+server:
+  port: 8080
