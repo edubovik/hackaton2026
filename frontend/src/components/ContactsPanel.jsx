@@ -12,7 +12,7 @@ import { FriendListItem } from './FriendListItem';
 import { FriendRequestItem } from './FriendRequestItem';
 import styles from './ContactsPanel.module.css';
 
-export function ContactsPanel() {
+export function ContactsPanel({ onFriendsChanged }) {
   const [friends, setFriends] = useState([]);
   const [requests, setRequests] = useState([]);
   const [addUsername, setAddUsername] = useState('');
@@ -23,6 +23,7 @@ export function ContactsPanel() {
     const [f, r] = await Promise.all([getFriends(), getIncomingRequests()]);
     setFriends(f);
     setRequests(r);
+    onFriendsChanged?.(f);
   }
 
   useEffect(() => { load(); }, []);

@@ -1,10 +1,16 @@
-.container {
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.page {
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  min-height: 100vh;
   padding: 2rem 1rem;
   background: #f0f2f5;
+  flex: 1;
 }
 
 .card {

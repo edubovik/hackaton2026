@@ -1,15 +1,19 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { editMessage, deleteMessage } from '../api/messages';
 import { AttachmentPreview } from './AttachmentPreview';
 import styles from './MessageItem.module.css';
 
-export function MessageItem({ message, currentUserId, isRoomAdmin, onReply, onUpdated }) {
+export function MessageItem({ message, currentUserId, isRoomAdmin, onReply, onUpdated, findMessage }) {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(message.content);
 
   const isOwn = message.senderId === currentUserId;
   const canEdit = isOwn && !message.deleted;
   const canDelete = (isOwn || isRoomAdmin) && !message.deleted;
+
+  useEffect(() => {
+    if (message.deleted && editing) setEditing(false);
+  }, [message.deleted, editing]);
 
   async function handleEdit() {
     try {
@@ -25,9 +29,16 @@ export function MessageItem({ message, currentUserId, isRoomAdmin, onReply, onUp
     try {
       await deleteMessage(message.id);
     } catch {
-      // ignore — the broadcast will update the list
+      // broadcast will update the list
     }
   }
+
+  const replySource = message.replyToId ? findMessage?.(message.replyToId) : null;
+  const replyPreview = replySource
+    ? `${replySource.senderUsername}: ${replySource.content?.slice(0, 60)}${replySource.content?.length > 60 ? '…' : ''}`
+    : message.replyToId
+      ? '↩ Original message not loaded'
+      : null;
 
   return (
     <div className={`${styles.item} ${isOwn ? styles.own : ''}`}>
@@ -37,8 +48,10 @@ export function MessageItem({ message, currentUserId, isRoomAdmin, onReply, onUp
         {message.edited && !message.deleted && <span className={styles.edited}>(edited)</span>}
       </div>
 
-      {message.replyToId && (
-        <div className={styles.replyQuote}>↩ reply</div>
+      {replyPreview && (
+        <div className={styles.replyQuote} title={replyPreview}>
+          {replyPreview}
+        </div>
       )}
 
       {editing ? (

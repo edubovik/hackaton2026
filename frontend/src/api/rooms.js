@@ -1,5 +1,11 @@
 const BASE = '/api/v1/rooms';
 
+export async function getMyRooms() {
+  const res = await fetch(`${BASE}/my`);
+  if (!res.ok) throw new Error((await res.json()).error);
+  return res.json();
+}
+
 export async function createRoom(name, description, isPublic) {
   const res = await fetch(BASE, {
     method: 'POST',

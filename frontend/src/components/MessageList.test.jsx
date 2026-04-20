@@ -80,6 +80,47 @@ describe('MessageList', () => {
     expect(screen.getByText('This message was deleted')).toBeInTheDocument();
   });
 
+  it('shows reply quote with sender and content when replyToId resolves', () => {
+    const messages = [
+      makeMsg({ id: 1, content: 'Original message', senderUsername: 'bob' }),
+      makeMsg({ id: 2, content: 'A reply', replyToId: 1 }),
+    ];
+
+    render(
+      <MessageList
+        messages={messages}
+        hasMore={false}
+        loading={false}
+        onLoadMore={noop}
+        currentUserId={10}
+        isRoomAdmin={false}
+        onReply={noop}
+        onMessageUpdated={noop}
+      />
+    );
+
+    expect(screen.getByText(/bob: Original message/)).toBeInTheDocument();
+  });
+
+  it('shows fallback for reply when original not loaded', () => {
+    const messages = [makeMsg({ id: 2, content: 'A reply', replyToId: 999 })];
+
+    render(
+      <MessageList
+        messages={messages}
+        hasMore={false}
+        loading={false}
+        onLoadMore={noop}
+        currentUserId={10}
+        isRoomAdmin={false}
+        onReply={noop}
+        onMessageUpdated={noop}
+      />
+    );
+
+    expect(screen.getByText(/Original message not loaded/)).toBeInTheDocument();
+  });
+
   it('shows loading indicator when loading is true', () => {
     render(
       <MessageList

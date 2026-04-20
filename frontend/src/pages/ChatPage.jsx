@@ -1,18 +1,20 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { useMessages } from '../hooks/useMessages';
 import { useUnread } from '../hooks/useUnread';
+import { usePresence } from '../hooks/usePresence';
 import { MessageList } from '../components/MessageList';
 import { MessageComposer } from '../components/MessageComposer';
 import { MembersPanel } from '../components/MembersPanel';
-import { RoomPanel } from '../components/RoomPanel';
 import { ContactsPanel } from '../components/ContactsPanel';
+import { ManageRoomModal } from '../components/ManageRoomModal';
 import { UnreadBadge } from '../components/UnreadBadge';
+import { PresenceIndicator } from '../components/PresenceIndicator';
+import { NavBar } from '../components/NavBar';
 import { getFriends } from '../api/contacts';
-import { listMembers } from '../api/rooms';
+import { getMyRooms, listMembers, leaveRoom } from '../api/rooms';
 import { sendRoomMessage, sendDmMessage, connect, disconnect } from '../api/socket';
 import { uploadAttachment } from '../api/attachments';
-import { useEffect } from 'react';
 import styles from './ChatPage.module.css';
 
 export default function ChatPage() {
@@ -22,13 +24,20 @@ export default function ChatPage() {
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [selectedFriend, setSelectedFriend] = useState(null);
   const [showContacts, setShowContacts] = useState(false);
+  const [showManage, setShowManage] = useState(false);
   const [replyTo, setReplyTo] = useState(null);
   const [myRole, setMyRole] = useState(null);
 
-  const { counts, clearRoom, clearDm, getCountForRoom, getCountForDm } = useUnread();
-
   const roomId = selectedRoom?.id ?? null;
   const partnerId = selectedFriend?.userId ?? null;
+
+  const { counts, clearRoom, clearDm, getCountForRoom, getCountForDm } = useUnread({
+    rooms,
+    userId: user?.id,
+    activeRoomId: roomId,
+    activeDmPartnerId: partnerId,
+  });
+  const presenceMap = usePresence();
 
   const { messages, hasMore, loading, loadMore } = useMessages({
     roomId,
@@ -36,22 +45,21 @@ export default function ChatPage() {
     currentUserId: user?.id,
   });
 
-  // Establish WebSocket connection for this session
   useEffect(() => {
     connect();
     return () => disconnect();
   }, []);
 
+  function loadRooms() {
+    getMyRooms().then(setRooms).catch(() => {});
+  }
+
+  useEffect(() => { loadRooms(); }, []);
+
   useEffect(() => {
     getFriends().then(setFriends).catch(() => {});
   }, []);
 
-  // Fetch rooms user is a member of (joined rooms via room catalog context)
-  useEffect(() => {
-    // rooms are stored in RoomPanel via its own state — we use the selected room
-  }, []);
-
-  // Resolve current user's role in selected room
   useEffect(() => {
     if (!selectedRoom) { setMyRole(null); return; }
     listMembers(selectedRoom.id)
@@ -62,7 +70,6 @@ export default function ChatPage() {
       .catch(() => setMyRole(null));
   }, [selectedRoom, user?.id]);
 
-  // Clear unread when switching to a room/DM
   useEffect(() => {
     if (roomId) clearRoom(roomId);
   }, [roomId, clearRoom]);
@@ -84,30 +91,78 @@ export default function ChatPage() {
     }
   }, [roomId, partnerId]);
 
-  const handleMessageUpdated = useCallback((updated) => {
-    // useMessages will receive the update via the STOMP subscription
-    // No local state mutation needed
-  }, []);
+  async function handleLeave(room) {
+    if (!window.confirm(`Leave room "${room.name}"?`)) return;
+    try {
+      await leaveRoom(room.id);
+      if (selectedRoom?.id === room.id) setSelectedRoom(null);
+      loadRooms();
+    } catch (err) {
+      console.error('Leave failed', err);
+    }
+  }
+
+  function handleRoomDeleted() {
+    setShowManage(false);
+    setSelectedRoom(null);
+    loadRooms();
+  }
 
   const isAdminOrOwner = myRole === 'ADMIN' || myRole === 'OWNER';
+  const isOwner = myRole === 'OWNER';
   const chatTitle = selectedRoom?.name ?? selectedFriend?.username ?? 'Select a conversation';
 
+  const publicRooms = rooms.filter(r => r.isPublic);
+  const privateRooms = rooms.filter(r => !r.isPublic);
+
+  function RoomItem({ room }) {
+    const isSelected = selectedRoom?.id === room.id;
+    const isRoomOwner = room.ownerId === user?.id;
+    return (
+      <div className={`${styles.sideItem} ${isSelected ? styles.active : ''}`}>
+        <button
+          className={styles.sideItemBtn}
+          onClick={() => { setSelectedRoom(room); setSelectedFriend(null); setShowContacts(false); }}
+        >
+          <span className={styles.sideItemName}>#{room.name}</span>
+          <UnreadBadge count={getCountForRoom(room.id)} />
+        </button>
+        <div className={styles.sideItemActions}>
+          {isSelected && isAdminOrOwner && (
+            <button
+              className={styles.sideIconBtn}
+              title="Manage room"
+              onClick={() => setShowManage(true)}
+            >⚙</button>
+          )}
+          {!isRoomOwner && (
+            <button
+              className={styles.sideIconBtn}
+              title="Leave room"
+              onClick={() => handleLeave(room)}
+            >✕</button>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   return (
+    <div className={styles.wrapper}>
+    <NavBar />
     <div className={styles.layout}>
-      {/* Left sidebar */}
       <aside className={styles.sidebar}>
         <section className={styles.sideSection}>
-          <h4 className={styles.sideTitle}>Rooms</h4>
-          {rooms.map((r) => (
-            <button
-              key={r.id}
-              className={`${styles.sideItem} ${selectedRoom?.id === r.id ? styles.active : ''}`}
-              onClick={() => { setSelectedRoom(r); setSelectedFriend(null); }}
-            >
-              <span className={styles.sideItemName}>#{r.name}</span>
-              <UnreadBadge count={getCountForRoom(r.id)} />
-            </button>
-          ))}
+          <div className={styles.sideTitleRow}>
+            <h4 className={styles.sideTitle}>Rooms</h4>
+          </div>
+          {publicRooms.map(r => <RoomItem key={r.id} room={r} />)}
+          {privateRooms.length > 0 && (
+            <>
+              <p className={styles.sideSubtitle}>Private</p>
+              {privateRooms.map(r => <RoomItem key={r.id} room={r} />)}
+            </>
+          )}
           {rooms.length === 0 && (
             <p className={styles.emptyHint}>Join rooms from the <a href="/rooms">catalog</a></p>
           )}
@@ -125,9 +180,10 @@ export default function ChatPage() {
           {friends.map((f) => (
             <button
               key={f.userId}
-              className={`${styles.sideItem} ${selectedFriend?.userId === f.userId ? styles.active : ''}`}
+              className={`${styles.sideItem} ${styles.sideItemFlat} ${selectedFriend?.userId === f.userId ? styles.active : ''}`}
               onClick={() => { setSelectedFriend(f); setSelectedRoom(null); setShowContacts(false); }}
             >
+              <PresenceIndicator state={presenceMap[f.userId] ?? 'OFFLINE'} />
               <span className={styles.sideItemName}>{f.username}</span>
               <UnreadBadge count={getCountForDm(f.userId)} />
             </button>
@@ -136,7 +192,6 @@ export default function ChatPage() {
         </section>
       </aside>
 
-      {/* Main chat area */}
       <main className={styles.main}>
         <header className={styles.header}>
           <h2 className={styles.title}>{showContacts ? 'Contacts' : chatTitle}</h2>
@@ -147,6 +202,7 @@ export default function ChatPage() {
         ) : (selectedRoom || selectedFriend) ? (
           <>
             <MessageList
+              key={roomId ?? `dm-${partnerId}`}
               messages={messages}
               hasMore={hasMore}
               loading={loading}
@@ -154,7 +210,7 @@ export default function ChatPage() {
               currentUserId={user?.id}
               isRoomAdmin={isAdminOrOwner}
               onReply={setReplyTo}
-              onMessageUpdated={handleMessageUpdated}
+              onMessageUpdated={() => {}}
             />
             <MessageComposer
               onSend={handleSend}
@@ -168,14 +224,25 @@ export default function ChatPage() {
         )}
       </main>
 
-      {/* Right panel: members (rooms only) */}
       {selectedRoom && (
         <MembersPanel
           roomId={selectedRoom.id}
           currentUserId={user?.id}
           isAdminOrOwner={isAdminOrOwner}
+          presenceMap={presenceMap}
         />
       )}
+    </div>
+
+    {showManage && selectedRoom && (
+      <ManageRoomModal
+        room={selectedRoom}
+        currentUserId={user?.id}
+        isOwner={isOwner}
+        onClose={() => setShowManage(false)}
+        onDeleted={handleRoomDeleted}
+      />
+    )}
     </div>
   );
 }

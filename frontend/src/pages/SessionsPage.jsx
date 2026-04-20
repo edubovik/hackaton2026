@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { getSessions, deleteSession } from '../api/auth';
+import { NavBar } from '../components/NavBar';
 import styles from './SessionsPage.module.css';
 
 export default function SessionsPage() {
@@ -25,38 +25,40 @@ export default function SessionsPage() {
   }
 
   return (
-    <div className={styles.container}>
-      <div className={styles.card}>
-        <h1>Active Sessions</h1>
-        {error && <div className={styles.error}>{error}</div>}
-        {loading ? (
-          <p>Loading…</p>
-        ) : sessions.length === 0 ? (
-          <p className={styles.empty}>No active sessions.</p>
-        ) : (
-          <ul className={styles.list}>
-            {sessions.map((session) => (
-              <li key={session.id} className={styles.item}>
-                <div className={styles.info}>
-                  <span className={styles.agent}>{session.userAgent || 'Unknown device'}</span>
-                  <span className={styles.meta}>
-                    {session.ipAddress || 'Unknown IP'} &middot;{' '}
-                    {new Date(session.createdAt).toLocaleDateString()}
-                  </span>
-                </div>
-                <button
-                  className={styles.revoke}
-                  onClick={() => handleRevoke(session.id)}
-                  aria-label="Revoke session"
-                >
-                  Revoke
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
-        <Link className={styles.link} to="/">Back to Chat</Link>
-      </div>
+    <div className={styles.wrapper}>
+      <NavBar />
+      <main className={styles.page}>
+        <div className={styles.card}>
+          <h1>Active Sessions</h1>
+          {error && <div className={styles.error}>{error}</div>}
+          {loading ? (
+            <p>Loading…</p>
+          ) : sessions.length === 0 ? (
+            <p className={styles.empty}>No active sessions.</p>
+          ) : (
+            <ul className={styles.list}>
+              {sessions.map((session) => (
+                <li key={session.id} className={styles.item}>
+                  <div className={styles.info}>
+                    <span className={styles.agent}>{session.userAgent || 'Unknown device'}</span>
+                    <span className={styles.meta}>
+                      {session.ipAddress || 'Unknown IP'} &middot;{' '}
+                      {new Date(session.createdAt).toLocaleDateString()}
+                    </span>
+                  </div>
+                  <button
+                    className={styles.revoke}
+                    onClick={() => handleRevoke(session.id)}
+                    aria-label="Revoke session"
+                  >
+                    Revoke
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </main>
     </div>
   );
 }

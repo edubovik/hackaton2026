@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class RoomService {
@@ -53,8 +54,9 @@ public class RoomService {
 
     @Transactional(readOnly = true)
     public Page<RoomSummaryDto> listPublicRooms(String search, int page, int size) {
-        return roomRepository.findPublicRooms(search, PageRequest.of(page, size))
-                .map(RoomSummaryDto::from);
+        Page<Room> rooms = roomRepository.findPublicRooms(search, PageRequest.of(page, size));
+        Map<Long, Long> counts = memberCountMap(rooms.getContent().stream().map(Room::getId).toList());
+        return rooms.map(r -> RoomSummaryDto.from(r, counts.getOrDefault(r.getId(), 0L).intValue()));
     }
 
     @Transactional(readOnly = true)
@@ -126,6 +128,25 @@ public class RoomService {
 
         roomMemberRepository.deleteByRoom_IdAndUser_Id(roomId, user.getId());
         publishMemberEvent(roomId, user, "LEAVE");
+    }
+
+    @Transactional(readOnly = true)
+    public List<RoomSummaryDto> getMyRooms(User user) {
+        List<RoomMember> memberships = roomMemberRepository.findByUser_Id(user.getId());
+        List<Long> roomIds = memberships.stream().map(m -> m.getRoom().getId()).toList();
+        Map<Long, Long> counts = memberCountMap(roomIds);
+        return memberships.stream()
+                .map(m -> RoomSummaryDto.from(m.getRoom(), counts.getOrDefault(m.getRoom().getId(), 0L).intValue()))
+                .toList();
+    }
+
+    private Map<Long, Long> memberCountMap(List<Long> roomIds) {
+        if (roomIds.isEmpty()) return Map.of();
+        return roomMemberRepository.countByRoomIds(roomIds).stream()
+                .collect(Collectors.toMap(
+                        row -> (Long) row[0],
+                        row -> (Long) row[1]
+                ));
     }
 
     @Transactional(readOnly = true)

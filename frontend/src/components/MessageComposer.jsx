@@ -3,10 +3,13 @@ import { ReplyBar } from './ReplyBar';
 import { AttachmentUploader } from './AttachmentUploader';
 import styles from './MessageComposer.module.css';
 
+const MAX_FILE_MB = 20;
+
 export function MessageComposer({ onSend, onSendAttachment, replyTo, onCancelReply, disabled }) {
   const [text, setText] = useState('');
   const [pendingFile, setPendingFile] = useState(null);
   const [uploadError, setUploadError] = useState('');
+  const [dragging, setDragging] = useState(false);
   const textareaRef = useRef(null);
 
   function handleKeyDown(e) {
@@ -33,6 +36,10 @@ export function MessageComposer({ onSend, onSendAttachment, replyTo, onCancelRep
   }
 
   function handleFileSelected(file) {
+    if (file.size > MAX_FILE_MB * 1024 * 1024) {
+      setUploadError(`File too large — max ${MAX_FILE_MB} MB`);
+      return;
+    }
     setUploadError('');
     setPendingFile(file);
     textareaRef.current?.focus();
@@ -43,10 +50,31 @@ export function MessageComposer({ onSend, onSendAttachment, replyTo, onCancelRep
     setUploadError('');
   }
 
+  function handleDragOver(e) {
+    e.preventDefault();
+    setDragging(true);
+  }
+
+  function handleDragLeave(e) {
+    if (!e.currentTarget.contains(e.relatedTarget)) setDragging(false);
+  }
+
+  function handleDrop(e) {
+    e.preventDefault();
+    setDragging(false);
+    const file = e.dataTransfer.files[0];
+    if (file) handleFileSelected(file);
+  }
+
   const canSend = !disabled && (!!text.trim() || !!pendingFile);
 
   return (
-    <div className={styles.wrapper}>
+    <div
+      className={`${styles.wrapper} ${dragging ? styles.dragging : ''}`}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+    >
       <ReplyBar replyTo={replyTo} onCancel={onCancelReply} />
       {pendingFile && (
         <div className={styles.pendingFile}>

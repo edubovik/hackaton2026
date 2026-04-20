@@ -1,10 +1,24 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { MemoryRouter } from 'react-router-dom';
 import RoomCatalogPage from './RoomCatalogPage';
 import * as rooms from '../api/rooms';
 
 vi.mock('../api/rooms');
+
+vi.mock('../components/NavBar', () => ({
+  NavBar: () => <nav data-testid="navbar" />,
+}));
+
+vi.mock('../hooks/useAuth', () => ({
+  useAuth: () => ({ user: { id: 1, username: 'alice' }, logout: vi.fn() }),
+}));
+
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom');
+  return { ...actual, useNavigate: () => vi.fn() };
+});
 
 const emptyPage = { content: [], totalPages: 0 };
 

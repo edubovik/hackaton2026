@@ -72,6 +72,25 @@ describe('MessageComposer', () => {
     expect(onSend).not.toHaveBeenCalled();
   });
 
+  it('accepts dropped file and shows pending file name', () => {
+    render(
+      <MessageComposer
+        onSend={() => {}}
+        onSendAttachment={() => {}}
+        replyTo={null}
+        onCancelReply={() => {}}
+        disabled={false}
+      />
+    );
+
+    const wrapper = screen.getByPlaceholderText(/Type a message/).closest('div').parentElement;
+    const file = new File(['hello'], 'test.txt', { type: 'text/plain' });
+    fireEvent.dragOver(wrapper, { dataTransfer: { files: [file] } });
+    fireEvent.drop(wrapper, { dataTransfer: { files: [file] } });
+
+    expect(screen.getByText(/test\.txt/)).toBeInTheDocument();
+  });
+
   it('passes replyToId to onSend', () => {
     const onSend = vi.fn();
     const replyTo = { id: 42, senderUsername: 'carol', content: 'Quoted msg' };

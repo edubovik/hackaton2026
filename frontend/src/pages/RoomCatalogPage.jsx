@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { listRooms, joinRoom } from '../api/rooms';
 import { RoomListItem } from '../components/RoomListItem';
 import { CreateRoomModal } from '../components/CreateRoomModal';
+import { NavBar } from '../components/NavBar';
 import styles from './RoomCatalogPage.module.css';
 
 export default function RoomCatalogPage() {
+  const navigate = useNavigate();
   const [rooms, setRooms] = useState([]);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(0);
@@ -29,6 +32,7 @@ export default function RoomCatalogPage() {
     setError('');
     try {
       await joinRoom(roomId);
+      navigate('/');
     } catch (err) {
       setError(err.message);
     }
@@ -40,6 +44,8 @@ export default function RoomCatalogPage() {
   }
 
   return (
+    <div className={styles.wrapper}>
+    <NavBar />
     <main className={styles.page}>
       <div className={styles.toolbar}>
         <h2>Room Catalog</h2>
@@ -81,5 +87,6 @@ export default function RoomCatalogPage() {
         />
       )}
     </main>
+    </div>
   );
 }

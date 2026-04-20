@@ -1,6 +1,13 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
 .layout {
   display: flex;
-  height: 100vh;
+  flex: 1;
   overflow: hidden;
   font-family: inherit;
 }
@@ -33,15 +40,9 @@
 .sideItem {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   width: 100%;
-  padding: 7px 14px;
-  background: none;
-  border: none;
   color: #b0bec9;
   font-size: 14px;
-  cursor: pointer;
-  text-align: left;
   border-radius: 0;
 }
 
@@ -50,15 +51,118 @@
   color: #fff;
 }
 
+.sideItem:hover .sideIconBtn {
+  opacity: 1;
+}
+
 .sideItem.active {
   background: rgba(255,255,255,0.12);
   color: #fff;
+}
+
+.sideItemFlat {
+  padding: 7px 14px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  justify-content: space-between;
+}
+
+.sideItemBtn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 4px 7px 14px;
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: inherit;
+  cursor: pointer;
+  text-align: left;
+  min-width: 0;
+}
+
+.sideItemActions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding-right: 6px;
+  flex-shrink: 0;
+}
+
+.sideIconBtn {
+  background: none;
+  border: none;
+  color: #8899aa;
+  cursor: pointer;
+  font-size: 11px;
+  padding: 2px 4px;
+  border-radius: 3px;
+  opacity: 0;
+  transition: opacity 0.1s;
+  line-height: 1;
+}
+
+.sideIconBtn:hover {
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  opacity: 1;
+}
+
+.sideItem.active .sideIconBtn {
+  opacity: 1;
 }
 
 .sideItemName {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.sideTitleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 10px;
+}
+
+.sideManageBtn {
+  background: none;
+  border: 1px solid #445566;
+  color: #8899aa;
+  border-radius: 4px;
+  width: 20px;
+  height: 20px;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sideManageBtn:hover {
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+}
+
+.sideManageBtnActive {
+  background: rgba(100,181,246,0.2);
+  color: #64b5f6;
+  border-color: #64b5f6;
+}
+
+.sideSubtitle {
+  padding: 4px 14px 2px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #607080;
+  margin: 0;
 }
 
 .emptyHint {

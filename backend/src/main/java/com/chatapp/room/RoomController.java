@@ -37,6 +37,11 @@ public class RoomController {
         return roomService.listPublicRooms(search, page, size);
     }
 
+    @GetMapping("/my")
+    public List<RoomSummaryDto> getMyRooms(@AuthenticationPrincipal User user) {
+        return roomService.getMyRooms(user);
+    }
+
     @GetMapping("/{id}")
     public RoomDetailDto getRoom(
             @AuthenticationPrincipal User user,

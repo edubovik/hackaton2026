@@ -6,6 +6,8 @@ import ChatPage from './pages/ChatPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import SessionsPage from './pages/SessionsPage';
+import RoomCatalogPage from './pages/RoomCatalogPage';
+import ContactsPage from './pages/ContactsPage';
 
 function ProtectedRoute({ children }) {
   const { user, authChecked } = useAuth();
@@ -27,6 +29,22 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <SessionsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/rooms"
+            element={
+              <ProtectedRoute>
+                <RoomCatalogPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/contacts"
+            element={
+              <ProtectedRoute>
+                <ContactsPage />
               </ProtectedRoute>
             }
           />

@@ -1,6 +1,12 @@
 .wrapper {
   border-top: 1px solid #e0e0e0;
   background: #fff;
+  transition: background 0.15s;
+}
+
+.dragging {
+  background: #e3f2fd;
+  border-top-color: #1976d2;
 }
 
 .row {
