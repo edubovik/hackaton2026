@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from 'react';
-import { login as apiLogin, logout as apiLogout, register as apiRegister } from '../api/auth';
+import { login as apiLogin, logout as apiLogout, register as apiRegister, getMe } from '../api/auth';
 
 const AuthContext = createContext(null);
 
@@ -11,9 +11,9 @@ export function AuthProvider({ children }) {
 
   async function login(email, password, keepMeSignedIn) {
     await apiLogin(email, password, keepMeSignedIn);
-    const userData = { email };
-    setUser(userData);
-    sessionStorage.setItem('user', JSON.stringify(userData));
+    const profile = await getMe();
+    setUser(profile);
+    sessionStorage.setItem('user', JSON.stringify(profile));
   }
 
   async function register(email, username, password) {

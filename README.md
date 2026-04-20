@@ -11,6 +11,7 @@ A classic web-based chat server supporting real-time messaging, public and priva
 | 2 | Presence (online / AFK / offline via WebSocket) | ✅ |
 | 3 | Contacts / Friends (requests, friends list, bans) | ✅ |
 | 4 | Chat Rooms (catalog, join/leave, roles, moderation, invitations) | ✅ |
+| 5 | Messaging (real-time room & DM chat, history, edit, delete, unread badges) | ✅ |
 
 ## Stack
 
@@ -111,6 +112,38 @@ Real-time member events are broadcast to `/topic/room.{id}.members`:
 - `JOIN` — user joined
 - `LEAVE` — user left
 - `BAN` — user was banned
+
+## Messaging API (Phase 5)
+
+### REST
+
+| Method | Path | Description |
+|---|---|---|
+| GET | `/api/v1/rooms/{id}/messages?before=<cursor>&limit=50` | Room message history (cursor-based) |
+| GET | `/api/v1/messages/dm/{partnerId}?before=<cursor>&limit=50` | DM history |
+| PATCH | `/api/v1/messages/{id}` | Edit own message `{content}` |
+| DELETE | `/api/v1/messages/{id}` | Delete own message (or admin delete in room) |
+| POST | `/api/v1/rooms/{id}/messages/read` | Mark room as read |
+| POST | `/api/v1/messages/dm/{partnerId}/read` | Mark DM as read |
+| GET | `/api/v1/messages/unread` | Unread counts for all rooms and DMs |
+| GET | `/api/v1/users/me` | Current user profile `{id, username, email}` |
+
+### WebSocket (STOMP)
+
+**Send a message:**
+- Room: publish to `/app/chat.room.{roomId}` with `{content, replyToId?}`
+- DM: publish to `/app/chat.dm.{partnerId}` with `{content, replyToId?}`
+
+**Receive messages:**
+- Room: subscribe to `/topic/room.{roomId}`
+- DM / edits: subscribe to `/queue/user.{userId}`
+
+### Business rules
+- Max message size: 3 KB
+- Only author can edit; author or room admins can delete
+- Deleted messages show "This message was deleted"
+- DMs allowed only between mutual friends where neither side has banned the other
+- Infinite scroll loads history newest-first using cursor (message ID)
 
 ## Project structure
 

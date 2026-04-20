@@ -1,0 +1,46 @@
+.wrapper {
+  border-top: 1px solid #e0e0e0;
+  background: #fff;
+}
+
+.row {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 10px 12px;
+}
+
+.input {
+  flex: 1;
+  resize: none;
+  font-size: 14px;
+  line-height: 1.5;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+  max-height: 120px;
+  overflow-y: auto;
+  font-family: inherit;
+}
+
+.input:focus {
+  border-color: #1976d2;
+}
+
+.sendBtn {
+  padding: 8px 18px;
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.sendBtn:disabled {
+  background: #b0bec5;
+  cursor: default;
+}
