@@ -1,0 +1,140 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 8px;
+  width: 480px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.titleBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1rem 0.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.titleBar h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.tabs {
+  display: flex;
+  border-bottom: 1px solid #ddd;
+  padding: 0 0.5rem;
+}
+
+.tab {
+  padding: 0.5rem 0.75rem;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.tab.active {
+  border-bottom-color: #4f46e5;
+  font-weight: bold;
+  color: #4f46e5;
+}
+
+.content {
+  padding: 0.75rem 1rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.actions {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.empty {
+  color: #999;
+  font-size: 0.85rem;
+}
+
+.inviteForm {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.inviteForm input {
+  flex: 1;
+  padding: 0.4rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.settingsForm {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.settingsForm label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: 0.9rem;
+}
+
+.settingsForm input:not([type="checkbox"]) {
+  padding: 0.4rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.checkboxRow {
+  flex-direction: row !important;
+  align-items: center;
+  gap: 0.5rem !important;
+}
+
+.settingsActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.danger {
+  background: #dc2626;
+  color: #fff;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.error {
+  color: #c00;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+}

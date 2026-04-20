@@ -1,0 +1,45 @@
+.panel {
+  width: 200px;
+  border-right: 1px solid #ddd;
+  padding: 0.75rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.header h3 {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.item {
+  padding: 0.4rem 0.5rem;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.item:hover {
+  background: #f0f0f0;
+}
+
+.active {
+  background: #e0e7ff;
+  font-weight: bold;
+}
+
+.empty {
+  color: #999;
+  font-size: 0.85rem;
+  padding: 0.4rem 0;
+}

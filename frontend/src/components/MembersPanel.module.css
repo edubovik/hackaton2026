@@ -1,0 +1,41 @@
+.panel {
+  width: 220px;
+  border-left: 1px solid #ddd;
+  padding: 0.75rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.header h3 {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.member {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0;
+}
+
+.username {
+  flex: 1;
+  font-size: 0.9rem;
+}
+
+.role {
+  font-size: 0.75rem;
+  color: #888;
+  text-transform: lowercase;
+}
