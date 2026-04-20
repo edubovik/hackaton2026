@@ -30,6 +30,7 @@ docker compose up --build
 | Frontend | http://localhost:3000 |
 | Backend API | http://localhost:8080/api/v1 |
 | Health check | http://localhost:8080/api/v1/health |
+| WebSocket | ws://localhost:8080/ws |
 | PostgreSQL | localhost:5432 |
 | RabbitMQ | localhost:5672 |
 | RabbitMQ Management UI | http://localhost:15672 (guest/guest) |

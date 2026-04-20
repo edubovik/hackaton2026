@@ -1,0 +1,16 @@
+.indicator {
+  font-size: 0.75rem;
+  line-height: 1;
+}
+
+.online {
+  color: #22c55e;
+}
+
+.afk {
+  color: #eab308;
+}
+
+.offline {
+  color: #9ca3af;
+}

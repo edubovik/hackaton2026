@@ -1,6 +1,11 @@
 app:
   jwt:
     secret: ${JWT_SECRET}
+  stomp:
+    relay-host: ${RABBITMQ_HOST}
+    relay-port: 61613
+    login: ${RABBITMQ_USER}
+    passcode: ${RABBITMQ_PASSWORD}
 
 spring:
   datasource:
