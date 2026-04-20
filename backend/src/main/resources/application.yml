@@ -22,6 +22,12 @@ spring:
     username: guest
     password: guest
 
+spring:
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB
+
 app:
   jwt:
     secret: local-dev-secret-do-not-use-in-production-must-be-at-least-32-chars
@@ -30,6 +36,8 @@ app:
     relay-port: 61613
     login: guest
     passcode: guest
+  uploads:
+    path: /tmp/chatapp-uploads
 
 server:
   port: 8080

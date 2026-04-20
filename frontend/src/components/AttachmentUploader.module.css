@@ -1,0 +1,17 @@
+.hiddenInput {
+  display: none;
+}
+
+.attachBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 6px;
+  border-radius: 6px;
+  line-height: 1;
+}
+
+.attachBtn:hover {
+  background: #f0f0f0;
+}
