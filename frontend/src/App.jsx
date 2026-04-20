@@ -2,20 +2,11 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './hooks/useAuth';
 import SignInPage from './pages/SignInPage';
 import RegisterPage from './pages/RegisterPage';
+import ChatPage from './pages/ChatPage';
 
 function ProtectedRoute({ children }) {
   const { user } = useAuth();
   return user ? children : <Navigate to="/signin" replace />;
-}
-
-function AppPlaceholder() {
-  const { user, logout } = useAuth();
-  return (
-    <div style={{ padding: '2rem' }}>
-      <p>You are logged in as <strong>{user?.email}</strong></p>
-      <button onClick={logout}>Sign out</button>
-    </div>
-  );
 }
 
 export default function App() {
@@ -29,7 +20,7 @@ export default function App() {
             path="/"
             element={
               <ProtectedRoute>
-                <AppPlaceholder />
+                <ChatPage />
               </ProtectedRoute>
             }
           />

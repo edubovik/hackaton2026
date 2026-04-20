@@ -69,6 +69,14 @@ public class AuthController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/users/me")
+    public ResponseEntity<java.util.Map<String, Object>> getMe(@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(java.util.Map.of(
+                "id", user.getId(),
+                "username", user.getUsername(),
+                "email", user.getEmail()));
+    }
+
     @PostMapping("/users/me/password")
     public ResponseEntity<Void> changePassword(@AuthenticationPrincipal User user,
                                                 @RequestBody ChangePasswordRequest req) {

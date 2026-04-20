@@ -1,0 +1,116 @@
+.item {
+  display: flex;
+  flex-direction: column;
+  padding: 6px 12px;
+  border-radius: 6px;
+  max-width: 72%;
+  align-self: flex-start;
+  background: #f5f5f5;
+  position: relative;
+}
+
+.item:hover .actions {
+  display: flex;
+}
+
+.own {
+  align-self: flex-end;
+  background: #e3f2fd;
+}
+
+.meta {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  margin-bottom: 2px;
+}
+
+.sender {
+  font-weight: 600;
+  font-size: 13px;
+  color: #333;
+}
+
+.time {
+  font-size: 11px;
+  color: #aaa;
+}
+
+.edited {
+  font-size: 11px;
+  color: #aaa;
+  font-style: italic;
+}
+
+.replyQuote {
+  font-size: 12px;
+  color: #888;
+  border-left: 3px solid #90caf9;
+  padding-left: 6px;
+  margin-bottom: 4px;
+}
+
+.content {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.deleted {
+  color: #aaa;
+  font-style: italic;
+}
+
+.actions {
+  display: none;
+  gap: 4px;
+  position: absolute;
+  top: 4px;
+  right: 4px;
+}
+
+.actions button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  color: #666;
+}
+
+.actions button:hover {
+  background: rgba(0,0,0,0.08);
+}
+
+.editBox textarea {
+  width: 100%;
+  resize: vertical;
+  font-size: 14px;
+  padding: 4px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.editActions {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.editActions button {
+  padding: 2px 10px;
+  font-size: 13px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  background: #fff;
+}
+
+.editActions button:first-child {
+  background: #1976d2;
+  color: #fff;
+  border-color: #1976d2;
+}

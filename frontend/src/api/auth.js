@@ -34,3 +34,5 @@ export const changePassword = (currentPassword, newPassword) =>
 
 export const deleteAccount = (password) =>
   request('DELETE', '/users/me', { password });
+
+export const getMe = () => request('GET', '/users/me');

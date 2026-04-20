@@ -33,6 +33,22 @@ export function publish(destination, body) {
   client.publish({ destination, body: JSON.stringify(body) });
 }
 
+export function subscribeRoom(roomId, callback) {
+  return subscribe(`/topic/room.${roomId}`, callback);
+}
+
+export function subscribeDm(userId, callback) {
+  return subscribe(`/queue/user.${userId}`, callback);
+}
+
+export function sendRoomMessage(roomId, content, replyToId = null) {
+  publish(`/app/chat.room.${roomId}`, { content, replyToId });
+}
+
+export function sendDmMessage(partnerId, content, replyToId = null) {
+  publish(`/app/chat.dm.${partnerId}`, { content, replyToId });
+}
+
 export function getClient() {
   return client;
 }
