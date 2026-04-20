@@ -1,0 +1,5 @@
+CREATE TABLE user_presence (
+    user_id    BIGINT      PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+    state      VARCHAR(10) NOT NULL DEFAULT 'OFFLINE',
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
