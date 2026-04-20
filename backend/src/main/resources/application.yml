@@ -39,5 +39,19 @@ app:
   uploads:
     path: /tmp/chatapp-uploads
 
+app:
+  mail:
+    from: noreply@chatapp.local
+  frontend:
+    url: http://localhost:3000
+
+spring:
+  mail:
+    host: localhost
+    port: 1025
+    properties:
+      mail.smtp.auth: false
+      mail.smtp.starttls.enable: false
+
 server:
   port: 8080

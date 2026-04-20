@@ -36,3 +36,9 @@ export const deleteAccount = (password) =>
   request('DELETE', '/users/me', { password });
 
 export const getMe = () => request('GET', '/users/me');
+
+export const forgotPassword = (email) =>
+  request('POST', '/auth/forgot-password', { email });
+
+export const resetPassword = (token, newPassword) =>
+  request('POST', '/auth/reset-password', { token, newPassword });

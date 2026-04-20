@@ -3,6 +3,9 @@ import { AuthProvider, useAuth } from './hooks/useAuth';
 import SignInPage from './pages/SignInPage';
 import RegisterPage from './pages/RegisterPage';
 import ChatPage from './pages/ChatPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
+import SessionsPage from './pages/SessionsPage';
 
 function ProtectedRoute({ children }) {
   const { user } = useAuth();
@@ -16,6 +19,16 @@ export default function App() {
         <Routes>
           <Route path="/signin" element={<SignInPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
+          <Route
+            path="/sessions"
+            element={
+              <ProtectedRoute>
+                <SessionsPage />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/"
             element={
