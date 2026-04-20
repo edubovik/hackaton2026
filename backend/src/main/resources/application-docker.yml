@@ -1,3 +1,9 @@
+spring:
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB
+
 app:
   jwt:
     secret: ${JWT_SECRET}
@@ -6,6 +12,8 @@ app:
     relay-port: 61613
     login: ${RABBITMQ_USER}
     passcode: ${RABBITMQ_PASSWORD}
+  uploads:
+    path: /app/uploads
 
 spring:
   datasource:

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { editMessage, deleteMessage } from '../api/messages';
+import { AttachmentPreview } from './AttachmentPreview';
 import styles from './MessageItem.module.css';
 
 export function MessageItem({ message, currentUserId, isRoomAdmin, onReply, onUpdated }) {
@@ -57,6 +58,10 @@ export function MessageItem({ message, currentUserId, isRoomAdmin, onReply, onUp
           {message.content}
         </p>
       )}
+
+      {message.attachments?.map((att) => (
+        <AttachmentPreview key={att.id} attachment={att} />
+      ))}
 
       {!message.deleted && !editing && (
         <div className={styles.actions}>

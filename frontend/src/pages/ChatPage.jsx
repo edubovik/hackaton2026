@@ -10,6 +10,7 @@ import { UnreadBadge } from '../components/UnreadBadge';
 import { getFriends } from '../api/contacts';
 import { listMembers } from '../api/rooms';
 import { sendRoomMessage, sendDmMessage } from '../api/socket';
+import { uploadAttachment } from '../api/attachments';
 import { useEffect } from 'react';
 import styles from './ChatPage.module.css';
 
@@ -65,6 +66,14 @@ export default function ChatPage() {
   const handleSend = useCallback((content, replyToId) => {
     if (roomId) sendRoomMessage(roomId, content, replyToId);
     else if (partnerId) sendDmMessage(partnerId, content, replyToId);
+  }, [roomId, partnerId]);
+
+  const handleSendAttachment = useCallback(async (file, content, replyToId) => {
+    try {
+      await uploadAttachment({ file, roomId, recipientId: partnerId, content, replyToId });
+    } catch (err) {
+      console.error('Attachment upload failed', err);
+    }
   }, [roomId, partnerId]);
 
   const handleMessageUpdated = useCallback((updated) => {
@@ -132,6 +141,7 @@ export default function ChatPage() {
             />
             <MessageComposer
               onSend={handleSend}
+              onSendAttachment={handleSendAttachment}
               replyTo={replyTo}
               onCancelReply={() => setReplyTo(null)}
             />

@@ -1,5 +1,7 @@
 package com.chatapp.message;
 
+import com.chatapp.attachment.dto.AttachmentDto;
+import com.chatapp.attachment.repository.AttachmentRepository;
 import com.chatapp.auth.entity.User;
 import com.chatapp.common.exception.BadRequestException;
 import com.chatapp.common.exception.ForbiddenException;
@@ -20,6 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class MessageService {
@@ -30,17 +34,20 @@ public class MessageService {
     private final UnreadCountRepository unreadCountRepository;
     private final RoomMemberRepository roomMemberRepository;
     private final FriendshipRepository friendshipRepository;
+    private final AttachmentRepository attachmentRepository;
     private final SimpMessagingTemplate messagingTemplate;
 
     public MessageService(MessageRepository messageRepository,
                           UnreadCountRepository unreadCountRepository,
                           RoomMemberRepository roomMemberRepository,
                           FriendshipRepository friendshipRepository,
+                          AttachmentRepository attachmentRepository,
                           SimpMessagingTemplate messagingTemplate) {
         this.messageRepository = messageRepository;
         this.unreadCountRepository = unreadCountRepository;
         this.roomMemberRepository = roomMemberRepository;
         this.friendshipRepository = friendshipRepository;
+        this.attachmentRepository = attachmentRepository;
         this.messagingTemplate = messagingTemplate;
     }
 
@@ -143,7 +150,14 @@ public class MessageService {
 
     private MessagePage toPage(List<Message> rows) {
         boolean hasMore = rows.size() > PAGE_SIZE;
-        List<MessageDto> dtos = rows.stream().limit(PAGE_SIZE).map(MessageDto::from).toList();
+        List<Message> page = rows.stream().limit(PAGE_SIZE).toList();
+        List<Long> ids = page.stream().map(Message::getId).toList();
+        Map<Long, List<AttachmentDto>> byMessage = attachmentRepository.findByMessage_IdIn(ids).stream()
+                .map(AttachmentDto::from)
+                .collect(Collectors.groupingBy(AttachmentDto::messageId));
+        List<MessageDto> dtos = page.stream()
+                .map(m -> MessageDto.from(m, byMessage.getOrDefault(m.getId(), List.of())))
+                .toList();
         return new MessagePage(dtos, hasMore);
     }
 

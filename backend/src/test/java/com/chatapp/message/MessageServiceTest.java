@@ -3,6 +3,7 @@ package com.chatapp.message;
 import com.chatapp.auth.entity.User;
 import com.chatapp.common.exception.BadRequestException;
 import com.chatapp.common.exception.ForbiddenException;
+import com.chatapp.attachment.repository.AttachmentRepository;
 import com.chatapp.contact.repository.FriendshipRepository;
 import com.chatapp.message.entity.Message;
 import com.chatapp.message.repository.MessageRepository;
@@ -29,6 +30,7 @@ class MessageServiceTest {
     @Mock UnreadCountRepository unreadCountRepository;
     @Mock RoomMemberRepository roomMemberRepository;
     @Mock FriendshipRepository friendshipRepository;
+    @Mock AttachmentRepository attachmentRepository;
     @Mock SimpMessagingTemplate messagingTemplate;
 
     MessageService service;
@@ -38,7 +40,7 @@ class MessageServiceTest {
     @BeforeEach
     void setUp() {
         service = new MessageService(messageRepository, unreadCountRepository,
-                roomMemberRepository, friendshipRepository, messagingTemplate);
+                roomMemberRepository, friendshipRepository, attachmentRepository, messagingTemplate);
         alice = makeUser(1L, "alice");
         bob   = makeUser(2L, "bob");
     }

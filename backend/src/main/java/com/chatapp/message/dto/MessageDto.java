@@ -1,8 +1,10 @@
 package com.chatapp.message.dto;
 
+import com.chatapp.attachment.dto.AttachmentDto;
 import com.chatapp.message.entity.Message;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
 public record MessageDto(
         Long id,
@@ -15,9 +17,14 @@ public record MessageDto(
         boolean edited,
         boolean deleted,
         OffsetDateTime createdAt,
-        OffsetDateTime updatedAt
+        OffsetDateTime updatedAt,
+        List<AttachmentDto> attachments
 ) {
     public static MessageDto from(Message m) {
+        return from(m, List.of());
+    }
+
+    public static MessageDto from(Message m, List<AttachmentDto> attachments) {
         return new MessageDto(
                 m.getId(),
                 m.getRoomId(),
@@ -29,7 +36,8 @@ public record MessageDto(
                 m.isEdited(),
                 m.isDeleted(),
                 m.getCreatedAt(),
-                m.getUpdatedAt()
+                m.getUpdatedAt(),
+                attachments
         );
     }
 }

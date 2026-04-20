@@ -44,3 +44,30 @@
   background: #b0bec5;
   cursor: default;
 }
+
+.pendingFile {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: #e3f2fd;
+  font-size: 13px;
+  color: #1976d2;
+}
+
+.removeFile {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #555;
+  font-size: 14px;
+  padding: 0 2px;
+  line-height: 1;
+}
+
+.error {
+  padding: 4px 12px;
+  font-size: 12px;
+  color: #c62828;
+  background: #ffebee;
+}

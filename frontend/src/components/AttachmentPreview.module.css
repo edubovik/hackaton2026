@@ -1,0 +1,46 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 6px;
+}
+
+.thumbnail {
+  max-width: 260px;
+  max-height: 200px;
+  border-radius: 6px;
+  display: block;
+  cursor: pointer;
+}
+
+.fileLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: #f5f5f5;
+  border-radius: 6px;
+  text-decoration: none;
+  color: #1976d2;
+  font-size: 13px;
+  max-width: 300px;
+}
+
+.fileLink:hover {
+  background: #e3f2fd;
+}
+
+.fileIcon {
+  font-size: 16px;
+}
+
+.fileName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.meta {
+  font-size: 11px;
+  color: #888;
+}
