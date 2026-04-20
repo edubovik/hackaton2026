@@ -12,6 +12,8 @@ A classic web-based chat server supporting real-time messaging, public and priva
 | 3 | Contacts / Friends (requests, friends list, bans) | ✅ |
 | 4 | Chat Rooms (catalog, join/leave, roles, moderation, invitations) | ✅ |
 | 5 | Messaging (real-time room & DM chat, history, edit, delete, unread badges) | ✅ |
+| 6 | File Attachments (upload, download, image preview) | ✅ |
+| 7 | Password Reset & Account Management (email reset link, sessions screen) | ✅ |
 
 ## Stack
 
@@ -45,6 +47,7 @@ docker compose up --build
 | PostgreSQL | localhost:5432 |
 | RabbitMQ | localhost:5672 |
 | RabbitMQ Management UI | http://localhost:15672 (guest/guest) |
+| Mailhog (email UI) | http://localhost:8025 |
 
 ## Running tests
 
@@ -70,6 +73,19 @@ cd frontend
 npm install
 npm test
 ```
+
+## Password Reset API (Phase 7)
+
+| Method | Path | Auth | Description |
+|---|---|---|---|
+| POST | `/api/v1/auth/forgot-password` | none | Send reset email `{email}` — always returns 200 |
+| POST | `/api/v1/auth/reset-password` | none | Reset password `{token, newPassword}` — 204 on success, 400 if invalid/expired |
+| GET | `/api/v1/auth/sessions` | required | List active sessions |
+| DELETE | `/api/v1/auth/sessions/{id}` | required | Revoke a session |
+| POST | `/api/v1/users/me/password` | required | Change password `{currentPassword, newPassword}` |
+| DELETE | `/api/v1/users/me` | required | Delete account `{password}` |
+
+Password reset tokens expire after 1 hour and are single-use. Reset emails are delivered to **Mailhog** in development — view them at http://localhost:8025.
 
 ## Contacts API (Phase 3)
 
