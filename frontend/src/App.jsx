@@ -8,7 +8,8 @@ import ResetPasswordPage from './pages/ResetPasswordPage';
 import SessionsPage from './pages/SessionsPage';
 
 function ProtectedRoute({ children }) {
-  const { user } = useAuth();
+  const { user, authChecked } = useAuth();
+  if (!authChecked) return null;
   return user ? children : <Navigate to="/signin" replace />;
 }
 

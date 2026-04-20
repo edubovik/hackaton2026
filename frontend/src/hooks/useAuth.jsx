@@ -1,19 +1,24 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 import { login as apiLogin, logout as apiLogout, register as apiRegister, getMe } from '../api/auth';
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(() => {
-    const stored = sessionStorage.getItem('user');
-    return stored ? JSON.parse(stored) : null;
-  });
+  const [user, setUser] = useState(null);
+  const [authChecked, setAuthChecked] = useState(false);
+
+  // On mount, validate session via cookies — works across tabs without re-login
+  useEffect(() => {
+    getMe()
+      .then(setUser)
+      .catch(() => {})
+      .finally(() => setAuthChecked(true));
+  }, []);
 
   async function login(email, password, keepMeSignedIn) {
     await apiLogin(email, password, keepMeSignedIn);
     const profile = await getMe();
     setUser(profile);
-    sessionStorage.setItem('user', JSON.stringify(profile));
   }
 
   async function register(email, username, password) {
@@ -23,11 +28,10 @@ export function AuthProvider({ children }) {
   async function logout() {
     await apiLogout().catch(() => {});
     setUser(null);
-    sessionStorage.removeItem('user');
   }
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, register }}>
+    <AuthContext.Provider value={{ user, authChecked, login, logout, register }}>
       {children}
     </AuthContext.Provider>
   );

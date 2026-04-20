@@ -6,10 +6,11 @@ import { MessageList } from '../components/MessageList';
 import { MessageComposer } from '../components/MessageComposer';
 import { MembersPanel } from '../components/MembersPanel';
 import { RoomPanel } from '../components/RoomPanel';
+import { ContactsPanel } from '../components/ContactsPanel';
 import { UnreadBadge } from '../components/UnreadBadge';
 import { getFriends } from '../api/contacts';
 import { listMembers } from '../api/rooms';
-import { sendRoomMessage, sendDmMessage } from '../api/socket';
+import { sendRoomMessage, sendDmMessage, connect, disconnect } from '../api/socket';
 import { uploadAttachment } from '../api/attachments';
 import { useEffect } from 'react';
 import styles from './ChatPage.module.css';
@@ -20,6 +21,7 @@ export default function ChatPage() {
   const [friends, setFriends] = useState([]);
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [selectedFriend, setSelectedFriend] = useState(null);
+  const [showContacts, setShowContacts] = useState(false);
   const [replyTo, setReplyTo] = useState(null);
   const [myRole, setMyRole] = useState(null);
 
@@ -33,6 +35,12 @@ export default function ChatPage() {
     partnerId,
     currentUserId: user?.id,
   });
+
+  // Establish WebSocket connection for this session
+  useEffect(() => {
+    connect();
+    return () => disconnect();
+  }, []);
 
   useEffect(() => {
     getFriends().then(setFriends).catch(() => {});
@@ -106,28 +114,37 @@ export default function ChatPage() {
         </section>
 
         <section className={styles.sideSection}>
-          <h4 className={styles.sideTitle}>Direct Messages</h4>
+          <div className={styles.sideTitleRow}>
+            <h4 className={styles.sideTitle}>Direct Messages</h4>
+            <button
+              className={`${styles.sideManageBtn} ${showContacts ? styles.sideManageBtnActive : ''}`}
+              onClick={() => { setShowContacts(v => !v); setSelectedRoom(null); setSelectedFriend(null); }}
+              title="Manage contacts"
+            >+</button>
+          </div>
           {friends.map((f) => (
             <button
               key={f.userId}
               className={`${styles.sideItem} ${selectedFriend?.userId === f.userId ? styles.active : ''}`}
-              onClick={() => { setSelectedFriend(f); setSelectedRoom(null); }}
+              onClick={() => { setSelectedFriend(f); setSelectedRoom(null); setShowContacts(false); }}
             >
               <span className={styles.sideItemName}>{f.username}</span>
               <UnreadBadge count={getCountForDm(f.userId)} />
             </button>
           ))}
-          {friends.length === 0 && <p className={styles.emptyHint}>Add friends to start DMs</p>}
+          {friends.length === 0 && <p className={styles.emptyHint}>No friends yet — click + to add</p>}
         </section>
       </aside>
 
       {/* Main chat area */}
       <main className={styles.main}>
         <header className={styles.header}>
-          <h2 className={styles.title}>{chatTitle}</h2>
+          <h2 className={styles.title}>{showContacts ? 'Contacts' : chatTitle}</h2>
         </header>
 
-        {(selectedRoom || selectedFriend) ? (
+        {showContacts ? (
+          <ContactsPanel onFriendsChanged={setFriends} />
+        ) : (selectedRoom || selectedFriend) ? (
           <>
             <MessageList
               messages={messages}

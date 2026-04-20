@@ -9,7 +9,7 @@ vi.mock('react-router-dom', async () => {
 });
 
 test('renders sign in page at /signin route', () => {
-  vi.spyOn(AuthContext, 'useAuth').mockReturnValue({ user: null, login: vi.fn(), logout: vi.fn(), register: vi.fn() });
+  vi.spyOn(AuthContext, 'useAuth').mockReturnValue({ user: null, authChecked: true, login: vi.fn(), logout: vi.fn(), register: vi.fn() });
   render(<App />);
   // App redirects unauthenticated users to /signin
   expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument();
