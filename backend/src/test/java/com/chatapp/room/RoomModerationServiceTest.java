@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
+import com.chatapp.common.BrokerTemplate;
 
 import java.util.Optional;
 
@@ -27,7 +27,7 @@ class RoomModerationServiceTest {
     @Mock RoomBanRepository roomBanRepository;
     @Mock RoomInvitationRepository roomInvitationRepository;
     @Mock UserRepository userRepository;
-    @Mock SimpMessagingTemplate messagingTemplate;
+    @Mock BrokerTemplate messagingTemplate;
 
     RoomService roomService;
     RoomModerationService moderationService;

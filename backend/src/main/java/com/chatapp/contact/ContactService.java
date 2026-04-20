@@ -13,8 +13,8 @@ import com.chatapp.contact.entity.UserBan;
 import com.chatapp.contact.repository.FriendRequestRepository;
 import com.chatapp.contact.repository.FriendshipRepository;
 import com.chatapp.contact.repository.UserBanRepository;
+import com.chatapp.common.BrokerTemplate;
 import com.chatapp.presence.repository.UserPresenceRepository;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,14 +29,14 @@ public class ContactService {
     private final UserBanRepository userBanRepository;
     private final UserRepository userRepository;
     private final UserPresenceRepository presenceRepository;
-    private final SimpMessagingTemplate messagingTemplate;
+    private final BrokerTemplate messagingTemplate;
 
     public ContactService(FriendRequestRepository friendRequestRepository,
                           FriendshipRepository friendshipRepository,
                           UserBanRepository userBanRepository,
                           UserRepository userRepository,
                           UserPresenceRepository presenceRepository,
-                          SimpMessagingTemplate messagingTemplate) {
+                          BrokerTemplate messagingTemplate) {
         this.friendRequestRepository = friendRequestRepository;
         this.friendshipRepository = friendshipRepository;
         this.userBanRepository = userBanRepository;
@@ -65,7 +65,7 @@ public class ContactService {
 
         FriendRequest request = friendRequestRepository.save(new FriendRequest(from, to, message));
 
-        messagingTemplate.convertAndSend(
+        messagingTemplate.send(
                 "/queue/user." + to.getId(),
                 Map.of("type", "FRIEND_REQUEST",
                        "requestId", request.getId(),
@@ -103,7 +103,7 @@ public class ContactService {
         long b = Math.max(request.getFromUser().getId(), request.getToUser().getId());
         friendshipRepository.save(new Friendship(a, b));
 
-        messagingTemplate.convertAndSend(
+        messagingTemplate.send(
                 "/queue/user." + request.getFromUser().getId(),
                 Map.of("type", "FRIEND_ACCEPTED",
                        "requestId", request.getId(),

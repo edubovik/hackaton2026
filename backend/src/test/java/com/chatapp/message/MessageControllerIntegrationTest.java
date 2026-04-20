@@ -5,10 +5,12 @@ import com.chatapp.auth.dto.RegisterRequest;
 import com.chatapp.message.dto.MessagePage;
 import com.chatapp.room.dto.CreateRoomRequest;
 import com.chatapp.room.dto.RoomSummaryDto;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.*;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -47,6 +49,11 @@ class MessageControllerIntegrationTest {
     @Autowired TestRestTemplate restTemplate;
 
     private static final AtomicInteger seq = new AtomicInteger(0);
+
+    @BeforeEach
+    void enablePatch() {
+        restTemplate.getRestTemplate().setRequestFactory(new HttpComponentsClientHttpRequestFactory());
+    }
 
     @Test
     void roomHistory_nonMember_returns403() {

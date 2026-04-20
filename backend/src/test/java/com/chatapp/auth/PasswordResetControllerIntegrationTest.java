@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = {
-                "spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration",
+                "spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration,org.springframework.boot.actuate.autoconfigure.mail.MailHealthContributorAutoConfiguration",
                 "app.jwt.secret=integration-test-secret-that-is-long-enough-for-hs256",
                 "app.mail.from=noreply@chatapp.local",
                 "app.frontend.url=http://localhost:3000"

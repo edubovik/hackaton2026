@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
+import com.chatapp.common.BrokerTemplate;
 
 import java.util.Optional;
 
@@ -31,7 +31,7 @@ class ContactServiceTest {
     @Mock UserBanRepository userBanRepository;
     @Mock UserRepository userRepository;
     @Mock UserPresenceRepository presenceRepository;
-    @Mock SimpMessagingTemplate messagingTemplate;
+    @Mock BrokerTemplate messagingTemplate;
 
     ContactService service;
 

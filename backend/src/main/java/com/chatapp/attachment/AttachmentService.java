@@ -14,7 +14,7 @@ import com.chatapp.room.repository.RoomMemberRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
+import com.chatapp.common.BrokerTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -43,14 +43,14 @@ public class AttachmentService {
     private final RoomMemberRepository roomMemberRepository;
     private final FriendshipRepository friendshipRepository;
     private final AttachmentAccessGuard accessGuard;
-    private final SimpMessagingTemplate messagingTemplate;
+    private final BrokerTemplate messagingTemplate;
 
     public AttachmentService(AttachmentRepository attachmentRepository,
                              MessageRepository messageRepository,
                              RoomMemberRepository roomMemberRepository,
                              FriendshipRepository friendshipRepository,
                              AttachmentAccessGuard accessGuard,
-                             SimpMessagingTemplate messagingTemplate) {
+                             BrokerTemplate messagingTemplate) {
         this.attachmentRepository = attachmentRepository;
         this.messageRepository = messageRepository;
         this.roomMemberRepository = roomMemberRepository;
@@ -172,11 +172,11 @@ public class AttachmentService {
 
     private void broadcast(MessageDto dto) {
         if (dto.roomId() != null) {
-            messagingTemplate.convertAndSend("/topic/room." + dto.roomId(), dto);
+            messagingTemplate.send("/topic/room." + dto.roomId(), dto);
         } else {
-            messagingTemplate.convertAndSendToUser(
+            messagingTemplate.sendToUser(
                     String.valueOf(dto.senderId()), "/queue/user." + dto.senderId(), dto);
-            messagingTemplate.convertAndSendToUser(
+            messagingTemplate.sendToUser(
                     String.valueOf(dto.recipientId()), "/queue/user." + dto.recipientId(), dto);
         }
     }

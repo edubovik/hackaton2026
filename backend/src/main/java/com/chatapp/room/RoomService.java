@@ -9,7 +9,7 @@ import com.chatapp.room.entity.*;
 import com.chatapp.room.repository.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
+import com.chatapp.common.BrokerTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,14 +24,14 @@ public class RoomService {
     private final RoomBanRepository roomBanRepository;
     private final RoomInvitationRepository roomInvitationRepository;
     private final UserRepository userRepository;
-    private final SimpMessagingTemplate messagingTemplate;
+    private final BrokerTemplate messagingTemplate;
 
     public RoomService(RoomRepository roomRepository,
                        RoomMemberRepository roomMemberRepository,
                        RoomBanRepository roomBanRepository,
                        RoomInvitationRepository roomInvitationRepository,
                        UserRepository userRepository,
-                       SimpMessagingTemplate messagingTemplate) {
+                       BrokerTemplate messagingTemplate) {
         this.roomRepository = roomRepository;
         this.roomMemberRepository = roomMemberRepository;
         this.roomBanRepository = roomBanRepository;
@@ -196,7 +196,7 @@ public class RoomService {
     }
 
     private void publishMemberEvent(Long roomId, User user, String type) {
-        messagingTemplate.convertAndSend(
+        messagingTemplate.send(
                 "/topic/room." + roomId + ".members",
                 Map.of("type", type, "userId", user.getId(), "username", user.getUsername()));
     }

@@ -11,7 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
+import com.chatapp.common.BrokerTemplate;
 
 import java.util.Optional;
 
@@ -25,7 +25,7 @@ class PresenceServiceTest {
 
     @Mock UserPresenceRepository presenceRepository;
     @Mock UserRepository userRepository;
-    @Mock SimpMessagingTemplate messagingTemplate;
+    @Mock BrokerTemplate messagingTemplate;
 
     PresenceService service;
 
@@ -60,7 +60,7 @@ class PresenceServiceTest {
         service.onDisconnect(userA);
 
         // still has one connection — should NOT go offline
-        verify(messagingTemplate, never()).convertAndSend(eq("/topic/presence"), any(Object.class));
+        verify(messagingTemplate, never()).send(eq("/topic/presence"), any(Object.class));
     }
 
     @Test

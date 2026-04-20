@@ -21,12 +21,16 @@ spring:
     port: 5672
     username: guest
     password: guest
-
-spring:
   servlet:
     multipart:
       max-file-size: 20MB
       max-request-size: 20MB
+  mail:
+    host: localhost
+    port: 1025
+    properties:
+      mail.smtp.auth: false
+      mail.smtp.starttls.enable: false
 
 app:
   jwt:
@@ -38,20 +42,10 @@ app:
     passcode: guest
   uploads:
     path: /tmp/chatapp-uploads
-
-app:
   mail:
     from: noreply@chatapp.local
   frontend:
     url: http://localhost:3000
-
-spring:
-  mail:
-    host: localhost
-    port: 1025
-    properties:
-      mail.smtp.auth: false
-      mail.smtp.starttls.enable: false
 
 server:
   port: 8080
