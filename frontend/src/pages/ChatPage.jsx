@@ -115,17 +115,17 @@ export default function ChatPage() {
   const publicRooms = rooms.filter(r => r.isPublic);
   const privateRooms = rooms.filter(r => !r.isPublic);
 
-  function RoomItem({ room }) {
-    const isSelected = selectedRoom?.id === room.id;
-    const isRoomOwner = room.ownerId === user?.id;
+  function renderRoom(r) {
+    const isSelected = selectedRoom?.id === r.id;
+    const isRoomOwner = r.ownerId === user?.id;
     return (
-      <div className={`${styles.sideItem} ${isSelected ? styles.active : ''}`}>
+      <div key={r.id} className={`${styles.sideItem} ${isSelected ? styles.active : ''}`}>
         <button
           className={styles.sideItemBtn}
-          onClick={() => { setSelectedRoom(room); setSelectedFriend(null); setShowContacts(false); }}
+          onClick={() => { setSelectedRoom(r); setSelectedFriend(null); setShowContacts(false); }}
         >
-          <span className={styles.sideItemName}>#{room.name}</span>
-          <UnreadBadge count={getCountForRoom(room.id)} />
+          <span className={styles.sideItemName}>#{r.name}</span>
+          <UnreadBadge count={getCountForRoom(r.id)} />
         </button>
         <div className={styles.sideItemActions}>
           {isSelected && isAdminOrOwner && (
@@ -139,7 +139,7 @@ export default function ChatPage() {
             <button
               className={styles.sideIconBtn}
               title="Leave room"
-              onClick={() => handleLeave(room)}
+              onClick={() => handleLeave(r)}
             >✕</button>
           )}
         </div>
@@ -156,11 +156,11 @@ export default function ChatPage() {
           <div className={styles.sideTitleRow}>
             <h4 className={styles.sideTitle}>Rooms</h4>
           </div>
-          {publicRooms.map(r => <RoomItem key={r.id} room={r} />)}
+          {publicRooms.map(renderRoom)}
           {privateRooms.length > 0 && (
             <>
               <p className={styles.sideSubtitle}>Private</p>
-              {privateRooms.map(r => <RoomItem key={r.id} room={r} />)}
+              {privateRooms.map(renderRoom)}
             </>
           )}
           {rooms.length === 0 && (
