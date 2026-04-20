@@ -11,7 +11,7 @@ import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.util.Map;
 
 @Component
 public class WebSocketAuthInterceptor implements ChannelInterceptor {
@@ -46,14 +46,11 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
     }
 
     private String extractToken(StompHeaderAccessor accessor) {
-        List<String> nativeHeaders = accessor.getNativeHeader("cookie");
-        if (nativeHeaders == null || nativeHeaders.isEmpty()) return null;
-        String cookieHeader = nativeHeaders.get(0);
-        for (String part : cookieHeader.split(";")) {
-            String trimmed = part.trim();
-            if (trimmed.startsWith("access_token=")) {
-                return trimmed.substring("access_token=".length());
-            }
+        // Token is captured from the HTTP upgrade Cookie header by CookieHandshakeInterceptor
+        Map<String, Object> attrs = accessor.getSessionAttributes();
+        if (attrs != null) {
+            Object token = attrs.get("access_token");
+            if (token instanceof String s) return s;
         }
         return null;
     }

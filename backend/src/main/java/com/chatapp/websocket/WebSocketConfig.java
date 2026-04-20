@@ -25,14 +25,17 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     private String relayPasscode;
 
     private final WebSocketAuthInterceptor authInterceptor;
+    private final CookieHandshakeInterceptor cookieHandshakeInterceptor;
 
-    public WebSocketConfig(WebSocketAuthInterceptor authInterceptor) {
+    public WebSocketConfig(WebSocketAuthInterceptor authInterceptor,
+                           CookieHandshakeInterceptor cookieHandshakeInterceptor) {
         this.authInterceptor = authInterceptor;
+        this.cookieHandshakeInterceptor = cookieHandshakeInterceptor;
     }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws");
+        registry.addEndpoint("/ws").addInterceptors(cookieHandshakeInterceptor);
     }
 
     @Override
