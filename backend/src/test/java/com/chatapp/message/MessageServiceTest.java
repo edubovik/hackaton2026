@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
+import com.chatapp.common.BrokerTemplate;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,7 +31,7 @@ class MessageServiceTest {
     @Mock RoomMemberRepository roomMemberRepository;
     @Mock FriendshipRepository friendshipRepository;
     @Mock AttachmentRepository attachmentRepository;
-    @Mock SimpMessagingTemplate messagingTemplate;
+    @Mock BrokerTemplate messagingTemplate;
 
     MessageService service;
     User alice;
@@ -118,7 +118,7 @@ class MessageServiceTest {
         service.editMessage(alice, 100L, "updated text");
 
         verify(messageRepository).save(msg);
-        verify(messagingTemplate).convertAndSend(eq("/topic/room.10"), (Object) any());
+        verify(messagingTemplate).send(eq("/topic/room.10"), (Object) any());
     }
 
     // ---- deleteMessage: author + room admin ----

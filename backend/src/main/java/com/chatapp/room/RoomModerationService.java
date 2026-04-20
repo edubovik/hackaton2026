@@ -10,7 +10,7 @@ import com.chatapp.room.entity.RoomMember;
 import com.chatapp.room.entity.RoomMemberRole;
 import com.chatapp.room.repository.RoomBanRepository;
 import com.chatapp.room.repository.RoomMemberRepository;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
+import com.chatapp.common.BrokerTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,13 +24,13 @@ public class RoomModerationService {
     private final RoomMemberRepository roomMemberRepository;
     private final RoomBanRepository roomBanRepository;
     private final UserRepository userRepository;
-    private final SimpMessagingTemplate messagingTemplate;
+    private final BrokerTemplate messagingTemplate;
 
     public RoomModerationService(RoomService roomService,
                                  RoomMemberRepository roomMemberRepository,
                                  RoomBanRepository roomBanRepository,
                                  UserRepository userRepository,
-                                 SimpMessagingTemplate messagingTemplate) {
+                                 BrokerTemplate messagingTemplate) {
         this.roomService = roomService;
         this.roomMemberRepository = roomMemberRepository;
         this.roomBanRepository = roomBanRepository;
@@ -61,7 +61,7 @@ public class RoomModerationService {
         var room = roomService.requireRoom(roomId);
         roomBanRepository.save(new RoomBan(room, target, admin));
 
-        messagingTemplate.convertAndSend(
+        messagingTemplate.send(
                 "/topic/room." + roomId + ".members",
                 Map.of("type", "BAN", "userId", target.getId(), "username", target.getUsername()));
     }

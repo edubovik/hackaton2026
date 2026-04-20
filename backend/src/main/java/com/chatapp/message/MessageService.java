@@ -16,7 +16,7 @@ import com.chatapp.message.repository.UnreadCountRepository;
 import com.chatapp.room.entity.RoomMemberRole;
 import com.chatapp.room.repository.RoomMemberRepository;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
+import com.chatapp.common.BrokerTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,14 +35,14 @@ public class MessageService {
     private final RoomMemberRepository roomMemberRepository;
     private final FriendshipRepository friendshipRepository;
     private final AttachmentRepository attachmentRepository;
-    private final SimpMessagingTemplate messagingTemplate;
+    private final BrokerTemplate messagingTemplate;
 
     public MessageService(MessageRepository messageRepository,
                           UnreadCountRepository unreadCountRepository,
                           RoomMemberRepository roomMemberRepository,
                           FriendshipRepository friendshipRepository,
                           AttachmentRepository attachmentRepository,
-                          SimpMessagingTemplate messagingTemplate) {
+                          BrokerTemplate messagingTemplate) {
         this.messageRepository = messageRepository;
         this.unreadCountRepository = unreadCountRepository;
         this.roomMemberRepository = roomMemberRepository;
@@ -180,11 +180,11 @@ public class MessageService {
 
     private void broadcastEdit(MessageDto dto) {
         if (dto.roomId() != null) {
-            messagingTemplate.convertAndSend("/topic/room." + dto.roomId(), dto);
+            messagingTemplate.send("/topic/room." + dto.roomId(), dto);
         } else {
-            messagingTemplate.convertAndSendToUser(
+            messagingTemplate.sendToUser(
                     String.valueOf(dto.senderId()), "/queue/user." + dto.senderId(), dto);
-            messagingTemplate.convertAndSendToUser(
+            messagingTemplate.sendToUser(
                     String.valueOf(dto.recipientId()), "/queue/user." + dto.recipientId(), dto);
         }
     }

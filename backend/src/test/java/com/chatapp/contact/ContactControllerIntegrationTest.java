@@ -93,10 +93,10 @@ class ContactControllerIntegrationTest {
                 FriendRequestDto.class, charlieCookie);
         ResponseEntity<FriendRequestDto[]> incoming = get(
                 "/api/v1/contacts/requests/incoming", FriendRequestDto[].class, aliceCookie);
-        Long charlieId = incoming.getBody()[0].fromUserId();
+        Long aliceId = incoming.getBody()[0].toUserId();
 
         // Charlie bans Alice
-        post("/api/v1/contacts/" + charlieId + "/ban", null, Void.class, charlieCookie);
+        post("/api/v1/contacts/" + aliceId + "/ban", null, Void.class, charlieCookie);
 
         // Alice tries to send request to Charlie → should be forbidden
         ResponseEntity<Object> req = post(

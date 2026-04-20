@@ -7,7 +7,7 @@ import com.chatapp.message.dto.MessageDto;
 import com.chatapp.message.entity.Message;
 import com.chatapp.message.repository.MessageRepository;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
+import com.chatapp.common.BrokerTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,12 +17,12 @@ public class MessageListener {
     private final MessageRepository messageRepository;
     private final UserRepository userRepository;
     private final MessageService messageService;
-    private final SimpMessagingTemplate messagingTemplate;
+    private final BrokerTemplate messagingTemplate;
 
     public MessageListener(MessageRepository messageRepository,
                            UserRepository userRepository,
                            MessageService messageService,
-                           SimpMessagingTemplate messagingTemplate) {
+                           BrokerTemplate messagingTemplate) {
         this.messageRepository = messageRepository;
         this.userRepository = userRepository;
         this.messageService = messageService;
@@ -51,11 +51,11 @@ public class MessageListener {
 
         if ("ROOM".equals(event.type())) {
             messageService.incrementRoomUnread(event.roomId(), event.senderId());
-            messagingTemplate.convertAndSend("/topic/room." + event.roomId(), dto);
+            messagingTemplate.send("/topic/room." + event.roomId(), dto);
         } else {
             messageService.incrementDmUnread(event.recipientId(), event.senderId());
-            messagingTemplate.convertAndSend("/queue/user." + event.recipientId(), dto);
-            messagingTemplate.convertAndSend("/queue/user." + event.senderId(), dto);
+            messagingTemplate.send("/queue/user." + event.recipientId(), dto);
+            messagingTemplate.send("/queue/user." + event.senderId(), dto);
         }
     }
 }

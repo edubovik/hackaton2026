@@ -117,7 +117,7 @@ class AttachmentControllerIntegrationTest {
 
     private String registerAndLogin(String email, String username) {
         restTemplate.postForEntity("/api/v1/auth/register",
-                new RegisterRequest(username, email, "password"), Void.class);
+                new RegisterRequest(email, username, "password"), Void.class);
         ResponseEntity<Void> res = restTemplate.postForEntity("/api/v1/auth/login",
                 new LoginRequest(email, "password", false), Void.class);
         List<String> cookies = res.getHeaders().get(HttpHeaders.SET_COOKIE);

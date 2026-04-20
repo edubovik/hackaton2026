@@ -13,7 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
+import com.chatapp.common.BrokerTemplate;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -30,7 +30,7 @@ class AttachmentServiceTest {
     @Mock RoomMemberRepository roomMemberRepository;
     @Mock FriendshipRepository friendshipRepository;
     @Mock AttachmentAccessGuard accessGuard;
-    @Mock SimpMessagingTemplate messagingTemplate;
+    @Mock BrokerTemplate messagingTemplate;
 
     @TempDir Path tempDir;
 

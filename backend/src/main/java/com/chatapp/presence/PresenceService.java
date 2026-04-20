@@ -6,7 +6,7 @@ import com.chatapp.presence.dto.PresenceUpdate;
 import com.chatapp.presence.entity.PresenceState;
 import com.chatapp.presence.entity.UserPresence;
 import com.chatapp.presence.repository.UserPresenceRepository;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
+import com.chatapp.common.BrokerTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,13 +20,13 @@ public class PresenceService {
 
     private final UserPresenceRepository presenceRepository;
     private final UserRepository userRepository;
-    private final SimpMessagingTemplate messagingTemplate;
+    private final BrokerTemplate messagingTemplate;
 
     private final ConcurrentHashMap<Long, AtomicInteger> connectionCounts = new ConcurrentHashMap<>();
 
     public PresenceService(UserPresenceRepository presenceRepository,
                            UserRepository userRepository,
-                           SimpMessagingTemplate messagingTemplate) {
+                           BrokerTemplate messagingTemplate) {
         this.presenceRepository = presenceRepository;
         this.userRepository = userRepository;
         this.messagingTemplate = messagingTemplate;
@@ -78,7 +78,7 @@ public class PresenceService {
     }
 
     private void broadcast(Long userId, String username, PresenceState state) {
-        messagingTemplate.convertAndSend("/topic/presence",
+        messagingTemplate.send("/topic/presence",
                 new PresenceUpdate(userId, username, state.name()));
     }
 }

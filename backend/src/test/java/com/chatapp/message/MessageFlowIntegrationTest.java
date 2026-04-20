@@ -47,6 +47,7 @@ class MessageFlowIntegrationTest {
     private static RabbitMQContainer createRabbit() {
         RabbitMQContainer c = new RabbitMQContainer("rabbitmq:3-management");
         c.withPluginsEnabled("rabbitmq_stomp");
+        c.addExposedPort(61613);
         return c;
     }
 

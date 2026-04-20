@@ -1,8 +1,23 @@
 spring:
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST:postgres}:5432/${POSTGRES_DB}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+  rabbitmq:
+    host: ${RABBITMQ_HOST}
+    port: ${RABBITMQ_PORT}
+    username: ${RABBITMQ_USER}
+    password: ${RABBITMQ_PASSWORD}
   servlet:
     multipart:
       max-file-size: 20MB
       max-request-size: 20MB
+  mail:
+    host: ${MAIL_HOST}
+    port: ${MAIL_PORT}
+    properties:
+      mail.smtp.auth: false
+      mail.smtp.starttls.enable: false
 
 app:
   jwt:
@@ -14,25 +29,6 @@ app:
     passcode: ${RABBITMQ_PASSWORD}
   uploads:
     path: /app/uploads
-
-spring:
-  datasource:
-    url: jdbc:postgresql://${POSTGRES_HOST:postgres}:5432/${POSTGRES_DB}
-    username: ${POSTGRES_USER}
-    password: ${POSTGRES_PASSWORD}
-  rabbitmq:
-    host: ${RABBITMQ_HOST}
-    port: ${RABBITMQ_PORT}
-    username: ${RABBITMQ_USER}
-    password: ${RABBITMQ_PASSWORD}
-  mail:
-    host: ${MAIL_HOST}
-    port: ${MAIL_PORT}
-    properties:
-      mail.smtp.auth: false
-      mail.smtp.starttls.enable: false
-
-app:
   mail:
     from: ${MAIL_FROM}
   frontend:

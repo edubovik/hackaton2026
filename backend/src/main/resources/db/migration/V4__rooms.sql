@@ -4,16 +4,16 @@ CREATE TABLE rooms (
     description TEXT,
     is_public   BOOLEAN NOT NULL DEFAULT TRUE,
     owner_id    BIGINT  NOT NULL REFERENCES users(id),
-    created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    CONSTRAINT rooms_name_unique UNIQUE (LOWER(name))
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE TYPE room_member_role AS ENUM ('MEMBER', 'ADMIN', 'OWNER');
+CREATE UNIQUE INDEX idx_rooms_name_lower ON rooms (LOWER(name));
 
 CREATE TABLE room_members (
     room_id     BIGINT NOT NULL REFERENCES rooms(id) ON DELETE CASCADE,
     user_id     BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    role        room_member_role NOT NULL DEFAULT 'MEMBER',
+    role        VARCHAR(10) NOT NULL DEFAULT 'MEMBER'
+                    CHECK (role IN ('MEMBER', 'ADMIN', 'OWNER')),
     joined_at   TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     PRIMARY KEY (room_id, user_id)
 );

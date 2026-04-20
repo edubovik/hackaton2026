@@ -8,6 +8,8 @@ public record FriendRequestDto(
         Long id,
         Long fromUserId,
         String fromUsername,
+        Long toUserId,
+        String toUsername,
         String message,
         OffsetDateTime createdAt
 ) {
@@ -16,6 +18,8 @@ public record FriendRequestDto(
                 r.getId(),
                 r.getFromUser().getId(),
                 r.getFromUser().getUsername(),
+                r.getToUser().getId(),
+                r.getToUser().getUsername(),
                 r.getMessage(),
                 r.getCreatedAt()
         );
