@@ -83,7 +83,7 @@ export function subscribeRoom(roomId, callback) {
 }
 
 export function subscribeDm(userId, callback) {
-  return subscribe(`/queue/user.${userId}`, callback);
+  return subscribe(`/topic/user.${userId}`, callback);
 }
 
 export function sendRoomMessage(roomId, content, replyToId = null) {

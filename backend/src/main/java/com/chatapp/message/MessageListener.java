@@ -54,8 +54,8 @@ public class MessageListener {
             messagingTemplate.send("/topic/room." + event.roomId(), dto);
         } else {
             messageService.incrementDmUnread(event.recipientId(), event.senderId());
-            messagingTemplate.send("/queue/user." + event.recipientId(), dto);
-            messagingTemplate.send("/queue/user." + event.senderId(), dto);
+            messagingTemplate.send("/topic/user." + event.recipientId(), dto);
+            messagingTemplate.send("/topic/user." + event.senderId(), dto);
         }
     }
 }
