@@ -9,6 +9,7 @@ describe('ContactsPanel', () => {
   beforeEach(() => {
     contacts.getFriends.mockResolvedValue([]);
     contacts.getIncomingRequests.mockResolvedValue([]);
+    contacts.getBannedUsers.mockResolvedValue([]);
   });
 
   it('renders the friend list section', async () => {
