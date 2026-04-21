@@ -38,7 +38,11 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
 
         Long userId = jwtService.extractUserId(token);
         userRepository.findById(userId).ifPresent(user -> {
-            var auth = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+            // Principal name must be String.valueOf(userId) so that convertAndSendToUser
+            // in MessageService (which uses the numeric ID) can resolve the session.
+            var auth = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities()) {
+                @Override public String getName() { return String.valueOf(user.getId()); }
+            };
             accessor.setUser(auth);
         });
 

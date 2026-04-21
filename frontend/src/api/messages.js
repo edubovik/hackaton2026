@@ -1,54 +1,19 @@
-const BASE = '/api/v1';
+import { apiFetch } from './http';
 
-export async function fetchRoomHistory(roomId, before) {
-  const params = before ? `?before=${before}` : '';
-  const res = await fetch(`${BASE}/rooms/${roomId}/messages${params}`, { credentials: 'include' });
-  if (!res.ok) throw new Error('Failed to load room history');
-  return res.json();
-}
+export const fetchRoomHistory = (roomId, before) =>
+  apiFetch(`/rooms/${roomId}/messages${before ? `?before=${before}` : ''}`);
 
-export async function fetchDmHistory(partnerId, before) {
-  const params = before ? `?before=${before}` : '';
-  const res = await fetch(`${BASE}/messages/dm/${partnerId}${params}`, { credentials: 'include' });
-  if (!res.ok) throw new Error('Failed to load DM history');
-  return res.json();
-}
+export const fetchDmHistory = (partnerId, before) =>
+  apiFetch(`/messages/dm/${partnerId}${before ? `?before=${before}` : ''}`);
 
-export async function editMessage(id, content) {
-  const res = await fetch(`${BASE}/messages/${id}`, {
-    method: 'PATCH',
-    credentials: 'include',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ content }),
-  });
-  if (!res.ok) throw new Error('Failed to edit message');
-  return res.json();
-}
+export const editMessage = (id, content) =>
+  apiFetch(`/messages/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ content }) });
 
-export async function deleteMessage(id) {
-  const res = await fetch(`${BASE}/messages/${id}`, {
-    method: 'DELETE',
-    credentials: 'include',
-  });
-  if (!res.ok) throw new Error('Failed to delete message');
-}
+export const deleteMessage = (id) =>
+  apiFetch(`/messages/${id}`, { method: 'DELETE' });
 
-export async function markRoomRead(roomId) {
-  await fetch(`${BASE}/rooms/${roomId}/messages/read`, {
-    method: 'POST',
-    credentials: 'include',
-  });
-}
+export const fetchUnreadCounts = () => apiFetch('/messages/unread');
 
-export async function markDmRead(partnerId) {
-  await fetch(`${BASE}/messages/dm/${partnerId}/read`, {
-    method: 'POST',
-    credentials: 'include',
-  });
-}
+export const markRoomRead = (roomId) => apiFetch(`/messages/unread/room/${roomId}`, { method: 'DELETE' });
 
-export async function fetchUnreadCounts() {
-  const res = await fetch(`${BASE}/messages/unread`, { credentials: 'include' });
-  if (!res.ok) throw new Error('Failed to load unread counts');
-  return res.json();
-}
+export const markDmRead = (partnerId) => apiFetch(`/messages/unread/dm/${partnerId}`, { method: 'DELETE' });

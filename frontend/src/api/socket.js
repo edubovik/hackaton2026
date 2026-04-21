@@ -9,13 +9,21 @@ function setConnected(value) {
   connectionListeners.forEach((cb) => cb(value));
 }
 
-const WS_URL = import.meta.env.VITE_WS_URL || 'ws://localhost:8080/ws';
+// Derive WebSocket URL from the current page origin so the connection goes
+// through the Nginx proxy (/ws → backend:8080) and avoids cross-origin rejection.
+const proto = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+const WS_URL = import.meta.env.VITE_WS_URL || `${proto}//${window.location.host}/ws`;
 
 export function connect() {
   if (client) return;
   client = new Client({
     brokerURL: WS_URL,
     reconnectDelay: 5000,
+    // Refresh the access-token cookie before every connect/reconnect so the
+    // WebSocket handshake always has a valid token (access tokens expire in 15 min).
+    beforeConnect: async () => {
+      await fetch('/api/v1/auth/refresh', { method: 'POST', credentials: 'include' }).catch(() => {});
+    },
     onConnect: () => setConnected(true),
     onDisconnect: () => setConnected(false),
     onStompError: () => setConnected(false),
