@@ -64,6 +64,10 @@ public class ContactService {
             throw new BadRequestException("Already friends");
         }
 
+        // Remove any old non-pending request so the UNIQUE constraint allows a new INSERT
+        friendRequestRepository.findByFromUser_IdAndToUser_Id(from.getId(), to.getId())
+                .ifPresent(friendRequestRepository::delete);
+
         FriendRequest request = friendRequestRepository.save(new FriendRequest(from, to, message));
 
         messagingTemplate.send(
