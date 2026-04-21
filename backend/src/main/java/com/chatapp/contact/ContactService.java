@@ -76,7 +76,7 @@ public class ContactService {
         FriendRequest request = friendRequestRepository.save(new FriendRequest(from, to, message));
 
         messagingTemplate.send(
-                "/queue/user." + to.getId(),
+                "/topic/user." + to.getId(),
                 Map.of("type", "FRIEND_REQUEST",
                        "requestId", request.getId(),
                        "fromUserId", from.getId(),
@@ -114,7 +114,7 @@ public class ContactService {
         friendshipRepository.save(new Friendship(a, b));
 
         messagingTemplate.send(
-                "/queue/user." + request.getFromUser().getId(),
+                "/topic/user." + request.getFromUser().getId(),
                 Map.of("type", "FRIEND_ACCEPTED",
                        "requestId", request.getId(),
                        "byUserId", user.getId(),

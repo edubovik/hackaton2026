@@ -174,10 +174,8 @@ public class AttachmentService {
         if (dto.roomId() != null) {
             messagingTemplate.send("/topic/room." + dto.roomId(), dto);
         } else {
-            messagingTemplate.sendToUser(
-                    String.valueOf(dto.senderId()), "/queue/user." + dto.senderId(), dto);
-            messagingTemplate.sendToUser(
-                    String.valueOf(dto.recipientId()), "/queue/user." + dto.recipientId(), dto);
+            messagingTemplate.send("/topic/user." + dto.senderId(), dto);
+            messagingTemplate.send("/topic/user." + dto.recipientId(), dto);
         }
     }
 }
