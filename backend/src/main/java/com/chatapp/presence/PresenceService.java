@@ -54,13 +54,23 @@ public class PresenceService {
 
     @Transactional
     public void sweepStaleConnections() {
-        Instant cutoff = Instant.now().minusSeconds(60);
-        List<UserPresence> stale = presenceRepository.findStaleActive(PresenceState.OFFLINE, cutoff);
-        for (UserPresence presence : stale) {
+        Instant now = Instant.now();
+        // ONLINE with no heartbeat for 60s → AFK
+        List<UserPresence> goingAfk = presenceRepository.findByStateAndUpdatedAtBefore(PresenceState.ONLINE, now.minusSeconds(60));
+        for (UserPresence presence : goingAfk) {
             presence.setState(PresenceState.AFK);
             presenceRepository.save(presence);
             userRepository.findById(presence.getUserId()).ifPresent(user ->
                     broadcast(user.getId(), user.getUsername(), PresenceState.AFK));
+        }
+        // AFK with no heartbeat for 120s total → OFFLINE
+        List<UserPresence> goingOffline = presenceRepository.findByStateAndUpdatedAtBefore(PresenceState.AFK, now.minusSeconds(120));
+        for (UserPresence presence : goingOffline) {
+            presence.setState(PresenceState.OFFLINE);
+            presenceRepository.save(presence);
+            connectionCounts.remove(presence.getUserId());
+            userRepository.findById(presence.getUserId()).ifPresent(user ->
+                    broadcast(user.getId(), user.getUsername(), PresenceState.OFFLINE));
         }
     }
 

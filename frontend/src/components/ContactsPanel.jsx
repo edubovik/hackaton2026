@@ -10,6 +10,7 @@ import {
   getBannedUsers,
   sendFriendRequest,
 } from '../api/contacts';
+import { usePresence } from '../hooks/usePresence';
 import { FriendListItem } from './FriendListItem';
 import { FriendRequestItem } from './FriendRequestItem';
 import styles from './ContactsPanel.module.css';
@@ -21,6 +22,7 @@ export function ContactsPanel({ onFriendsChanged }) {
   const [addUsername, setAddUsername] = useState('');
   const [addMessage, setAddMessage] = useState('');
   const [error, setError] = useState('');
+  const presenceMap = usePresence();
 
   async function load() {
     const [f, r, b] = await Promise.all([getFriends(), getIncomingRequests(), getBannedUsers()]);
@@ -112,7 +114,7 @@ export function ContactsPanel({ onFriendsChanged }) {
           {friends.map(f => (
             <FriendListItem
               key={f.userId}
-              friend={f}
+              friend={{ ...f, presence: presenceMap[f.userId] ?? f.presence }}
               onRemove={handleRemove}
               onBan={handleBan}
             />
