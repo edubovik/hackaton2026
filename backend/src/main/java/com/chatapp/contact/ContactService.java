@@ -57,7 +57,7 @@ public class ContactService {
         if (userBanRepository.existsByBannerIdAndBannedId(to.getId(), from.getId())) {
             throw new ForbiddenException("Cannot send friend request");
         }
-        if (friendRequestRepository.findByFromUser_IdAndToUser_Id(from.getId(), to.getId()).isPresent()) {
+        if (friendRequestRepository.findPendingBetween(from.getId(), to.getId()).isPresent()) {
             throw new BadRequestException("Friend request already sent");
         }
         if (friendshipRepository.existsBetween(from.getId(), to.getId())) {
