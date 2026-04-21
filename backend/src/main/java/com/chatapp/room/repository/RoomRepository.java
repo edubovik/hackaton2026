@@ -13,8 +13,11 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
 
     boolean existsByNameIgnoreCase(String name);
 
-    @Query("SELECT r FROM Room r WHERE r.isPublic = true AND (:search IS NULL OR LOWER(r.name) LIKE LOWER(CONCAT('%', :search, '%')))")
-    Page<Room> findPublicRooms(@Param("search") String search, Pageable pageable);
+    @Query("SELECT r FROM Room r WHERE r.isPublic = true")
+    Page<Room> findPublicRooms(Pageable pageable);
+
+    @Query("SELECT r FROM Room r WHERE r.isPublic = true AND LOWER(r.name) LIKE LOWER(CONCAT('%', :search, '%'))")
+    Page<Room> findPublicRoomsByName(@Param("search") String search, Pageable pageable);
 
     Optional<Room> findByIdAndIsPublicTrue(Long id);
 }

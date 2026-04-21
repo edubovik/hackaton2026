@@ -9,6 +9,7 @@ import com.chatapp.room.entity.*;
 import com.chatapp.room.repository.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import com.chatapp.common.BrokerTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,7 +55,11 @@ public class RoomService {
 
     @Transactional(readOnly = true)
     public Page<RoomSummaryDto> listPublicRooms(String search, int page, int size) {
-        Page<Room> rooms = roomRepository.findPublicRooms(search, PageRequest.of(page, size));
+        Pageable pageable = PageRequest.of(page, size);
+        boolean hasSearch = search != null && !search.isBlank();
+        Page<Room> rooms = hasSearch
+                ? roomRepository.findPublicRoomsByName(search, pageable)
+                : roomRepository.findPublicRooms(pageable);
         Map<Long, Long> counts = memberCountMap(rooms.getContent().stream().map(Room::getId).toList());
         return rooms.map(r -> RoomSummaryDto.from(r, counts.getOrDefault(r.getId(), 0L).intValue()));
     }
