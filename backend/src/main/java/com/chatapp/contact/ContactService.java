@@ -4,6 +4,7 @@ import com.chatapp.auth.entity.User;
 import com.chatapp.auth.repository.UserRepository;
 import com.chatapp.common.exception.BadRequestException;
 import com.chatapp.common.exception.ForbiddenException;
+import com.chatapp.contact.dto.BannedContactDto;
 import com.chatapp.contact.dto.FriendDto;
 import com.chatapp.contact.dto.FriendRequestDto;
 import com.chatapp.contact.entity.FriendRequest;
@@ -171,5 +172,15 @@ public class ContactService {
     @Transactional
     public void unbanUser(User banner, Long bannedId) {
         userBanRepository.deleteByBannerIdAndBannedId(banner.getId(), bannedId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<BannedContactDto> getBannedUsers(User banner) {
+        List<Long> bannedIds = userBanRepository.findByBannerId(banner.getId())
+                .stream().map(UserBan::getBannedId).toList();
+        if (bannedIds.isEmpty()) return List.of();
+        return userRepository.findAllById(bannedIds).stream()
+                .map(u -> new BannedContactDto(u.getId(), u.getUsername()))
+                .toList();
     }
 }

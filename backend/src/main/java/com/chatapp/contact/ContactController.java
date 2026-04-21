@@ -1,6 +1,7 @@
 package com.chatapp.contact;
 
 import com.chatapp.auth.entity.User;
+import com.chatapp.contact.dto.BannedContactDto;
 import com.chatapp.contact.dto.FriendDto;
 import com.chatapp.contact.dto.FriendRequestDto;
 import com.chatapp.contact.dto.SendFriendRequestDto;
@@ -61,6 +62,11 @@ public class ContactController {
             @PathVariable Long userId) {
         contactService.removeFriend(user, userId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/banned")
+    public List<BannedContactDto> getBannedUsers(@AuthenticationPrincipal User user) {
+        return contactService.getBannedUsers(user);
     }
 
     @PostMapping("/{userId}/ban")

@@ -6,6 +6,8 @@ import {
   rejectRequest,
   removeFriend,
   banUser,
+  unbanUser,
+  getBannedUsers,
   sendFriendRequest,
 } from '../api/contacts';
 import { FriendListItem } from './FriendListItem';
@@ -15,14 +17,16 @@ import styles from './ContactsPanel.module.css';
 export function ContactsPanel({ onFriendsChanged }) {
   const [friends, setFriends] = useState([]);
   const [requests, setRequests] = useState([]);
+  const [banned, setBanned] = useState([]);
   const [addUsername, setAddUsername] = useState('');
   const [addMessage, setAddMessage] = useState('');
   const [error, setError] = useState('');
 
   async function load() {
-    const [f, r] = await Promise.all([getFriends(), getIncomingRequests()]);
+    const [f, r, b] = await Promise.all([getFriends(), getIncomingRequests(), getBannedUsers()]);
     setFriends(f);
     setRequests(r);
+    setBanned(b);
     onFriendsChanged?.(f);
   }
 
@@ -45,6 +49,11 @@ export function ContactsPanel({ onFriendsChanged }) {
 
   async function handleBan(userId) {
     await banUser(userId);
+    await load();
+  }
+
+  async function handleUnban(userId) {
+    await unbanUser(userId);
     await load();
   }
 
@@ -111,6 +120,20 @@ export function ContactsPanel({ onFriendsChanged }) {
           {friends.length === 0 && <li className={styles.empty}>No friends yet</li>}
         </ul>
       </section>
+
+      {banned.length > 0 && (
+        <section>
+          <h3>Blocked Users ({banned.length})</h3>
+          <ul className={styles.list}>
+            {banned.map(b => (
+              <li key={b.userId} className={styles.row}>
+                <span>{b.username}</span>
+                <button onClick={() => handleUnban(b.userId)}>Unblock</button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
     </div>
   );
 }

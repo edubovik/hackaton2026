@@ -13,6 +13,8 @@ export const getFriends = () => apiFetch('/contacts');
 
 export const removeFriend = (userId) => apiFetch(`/contacts/${userId}`, { method: 'DELETE' });
 
+export const getBannedUsers = () => apiFetch('/contacts/banned');
+
 export const banUser = (userId) => apiFetch(`/contacts/${userId}/ban`, { method: 'POST' });
 
 export const unbanUser = (userId) => apiFetch(`/contacts/${userId}/ban`, { method: 'DELETE' });
