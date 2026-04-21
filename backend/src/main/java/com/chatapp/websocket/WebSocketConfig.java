@@ -35,7 +35,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws").addInterceptors(cookieHandshakeInterceptor);
+        registry.addEndpoint("/ws").addInterceptors(cookieHandshakeInterceptor).setAllowedOriginPatterns("*");
     }
 
     @Override

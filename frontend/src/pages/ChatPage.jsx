@@ -13,7 +13,7 @@ import { PresenceIndicator } from '../components/PresenceIndicator';
 import { NavBar } from '../components/NavBar';
 import { getFriends } from '../api/contacts';
 import { getMyRooms, listMembers, leaveRoom } from '../api/rooms';
-import { sendRoomMessage, sendDmMessage, connect, disconnect } from '../api/socket';
+import { sendRoomMessage, sendDmMessage, connect, disconnect, onConnectionChange, isConnected } from '../api/socket';
 import { uploadAttachment } from '../api/attachments';
 import styles from './ChatPage.module.css';
 
@@ -27,6 +27,7 @@ export default function ChatPage() {
   const [showManage, setShowManage] = useState(false);
   const [replyTo, setReplyTo] = useState(null);
   const [myRole, setMyRole] = useState(null);
+  const [socketConnected, setSocketConnected] = useState(isConnected);
 
   const roomId = selectedRoom?.id ?? null;
   const partnerId = selectedFriend?.userId ?? null;
@@ -47,7 +48,8 @@ export default function ChatPage() {
 
   useEffect(() => {
     connect();
-    return () => disconnect();
+    const unsub = onConnectionChange(setSocketConnected);
+    return () => { disconnect(); unsub(); };
   }, []);
 
   function loadRooms() {
@@ -217,6 +219,7 @@ export default function ChatPage() {
               onSendAttachment={handleSendAttachment}
               replyTo={replyTo}
               onCancelReply={() => setReplyTo(null)}
+              disabled={!socketConnected}
             />
           </>
         ) : (

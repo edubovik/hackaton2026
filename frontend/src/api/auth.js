@@ -1,44 +1,31 @@
-const BASE = '/api/v1';
-
-async function request(method, path, body) {
-  const res = await fetch(`${BASE}${path}`, {
-    method,
-    headers: body ? { 'Content-Type': 'application/json' } : {},
-    credentials: 'include',
-    body: body ? JSON.stringify(body) : undefined,
-  });
-  if (!res.ok) {
-    const data = await res.json().catch(() => ({}));
-    throw new Error(data.error || `Request failed: ${res.status}`);
-  }
-  const text = await res.text();
-  return text ? JSON.parse(text) : null;
-}
+import { apiFetch } from './http';
 
 export const register = (email, username, password) =>
-  request('POST', '/auth/register', { email, username, password });
+  apiFetch('/auth/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, username, password }) });
 
 export const login = (email, password, keepMeSignedIn) =>
-  request('POST', '/auth/login', { email, password, keepMeSignedIn });
+  apiFetch('/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password, keepMeSignedIn }) });
 
-export const logout = () => request('POST', '/auth/logout');
+export const logout = () =>
+  apiFetch('/auth/logout', { method: 'POST' });
 
-export const refresh = () => request('POST', '/auth/refresh');
+export const refresh = () =>
+  apiFetch('/auth/refresh', { method: 'POST' });
 
-export const getSessions = () => request('GET', '/auth/sessions');
+export const getSessions = () => apiFetch('/auth/sessions');
 
-export const deleteSession = (id) => request('DELETE', `/auth/sessions/${id}`);
+export const deleteSession = (id) => apiFetch(`/auth/sessions/${id}`, { method: 'DELETE' });
 
 export const changePassword = (currentPassword, newPassword) =>
-  request('POST', '/users/me/password', { currentPassword, newPassword });
+  apiFetch('/users/me/password', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ currentPassword, newPassword }) });
 
 export const deleteAccount = (password) =>
-  request('DELETE', '/users/me', { password });
+  apiFetch('/users/me', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password }) });
 
-export const getMe = () => request('GET', '/users/me');
+export const getMe = () => apiFetch('/users/me');
 
 export const forgotPassword = (email) =>
-  request('POST', '/auth/forgot-password', { email });
+  apiFetch('/auth/forgot-password', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }) });
 
 export const resetPassword = (token, newPassword) =>
-  request('POST', '/auth/reset-password', { token, newPassword });
+  apiFetch('/auth/reset-password', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token, newPassword }) });

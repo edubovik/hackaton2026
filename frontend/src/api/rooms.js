@@ -1,102 +1,40 @@
-const BASE = '/api/v1/rooms';
+import { apiFetch } from './http';
 
-export async function getMyRooms() {
-  const res = await fetch(`${BASE}/my`);
-  if (!res.ok) throw new Error((await res.json()).error);
-  return res.json();
-}
+export const getMyRooms = () => apiFetch('/rooms/my');
 
-export async function createRoom(name, description, isPublic) {
-  const res = await fetch(BASE, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name, description, isPublic }),
-  });
-  if (!res.ok) throw new Error((await res.json()).error);
-  return res.json();
-}
+export const createRoom = (name, description, isPublic) =>
+  apiFetch('/rooms', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, description, isPublic }) });
 
-export async function listRooms(search = '', page = 0, size = 20) {
+export function listRooms(search = '', page = 0, size = 20) {
   const params = new URLSearchParams({ page, size });
   if (search) params.set('search', search);
-  const res = await fetch(`${BASE}?${params}`);
-  if (!res.ok) throw new Error((await res.json()).error);
-  return res.json();
+  return apiFetch(`/rooms?${params}`);
 }
 
-export async function getRoom(id) {
-  const res = await fetch(`${BASE}/${id}`);
-  if (!res.ok) throw new Error((await res.json()).error);
-  return res.json();
-}
+export const getRoom = (id) => apiFetch(`/rooms/${id}`);
 
-export async function updateRoom(id, name, description, isPublic) {
-  const res = await fetch(`${BASE}/${id}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name, description, isPublic }),
-  });
-  if (!res.ok) throw new Error((await res.json()).error);
-  return res.json();
-}
+export const updateRoom = (id, name, description, isPublic) =>
+  apiFetch(`/rooms/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, description, isPublic }) });
 
-export async function deleteRoom(id) {
-  const res = await fetch(`${BASE}/${id}`, { method: 'DELETE' });
-  if (!res.ok) throw new Error((await res.json()).error);
-}
+export const deleteRoom = (id) => apiFetch(`/rooms/${id}`, { method: 'DELETE' });
 
-export async function joinRoom(id) {
-  const res = await fetch(`${BASE}/${id}/join`, { method: 'POST' });
-  if (!res.ok) throw new Error((await res.json()).error);
-}
+export const joinRoom = (id) => apiFetch(`/rooms/${id}/join`, { method: 'POST' });
 
-export async function leaveRoom(id) {
-  const res = await fetch(`${BASE}/${id}/leave`, { method: 'DELETE' });
-  if (!res.ok) throw new Error((await res.json()).error);
-}
+export const leaveRoom = (id) => apiFetch(`/rooms/${id}/leave`, { method: 'DELETE' });
 
-export async function listMembers(id) {
-  const res = await fetch(`${BASE}/${id}/members`);
-  if (!res.ok) throw new Error((await res.json()).error);
-  return res.json();
-}
+export const listMembers = (id) => apiFetch(`/rooms/${id}/members`);
 
-export async function banMember(roomId, userId) {
-  const res = await fetch(`${BASE}/${roomId}/members/${userId}/ban`, { method: 'POST' });
-  if (!res.ok) throw new Error((await res.json()).error);
-}
+export const banMember = (roomId, userId) => apiFetch(`/rooms/${roomId}/members/${userId}/ban`, { method: 'POST' });
 
-export async function unbanMember(roomId, userId) {
-  const res = await fetch(`${BASE}/${roomId}/members/${userId}/ban`, { method: 'DELETE' });
-  if (!res.ok) throw new Error((await res.json()).error);
-}
+export const unbanMember = (roomId, userId) => apiFetch(`/rooms/${roomId}/members/${userId}/ban`, { method: 'DELETE' });
 
-export async function listBans(roomId) {
-  const res = await fetch(`${BASE}/${roomId}/bans`);
-  if (!res.ok) throw new Error((await res.json()).error);
-  return res.json();
-}
+export const listBans = (roomId) => apiFetch(`/rooms/${roomId}/bans`);
 
-export async function promoteAdmin(roomId, userId) {
-  const res = await fetch(`${BASE}/${roomId}/admins/${userId}`, { method: 'POST' });
-  if (!res.ok) throw new Error((await res.json()).error);
-}
+export const promoteAdmin = (roomId, userId) => apiFetch(`/rooms/${roomId}/admins/${userId}`, { method: 'POST' });
 
-export async function demoteAdmin(roomId, userId) {
-  const res = await fetch(`${BASE}/${roomId}/admins/${userId}`, { method: 'DELETE' });
-  if (!res.ok) throw new Error((await res.json()).error);
-}
+export const demoteAdmin = (roomId, userId) => apiFetch(`/rooms/${roomId}/admins/${userId}`, { method: 'DELETE' });
 
-export async function inviteUser(roomId, username) {
-  const res = await fetch(`${BASE}/${roomId}/invitations`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username }),
-  });
-  if (!res.ok) throw new Error((await res.json()).error);
-}
+export const inviteUser = (roomId, username) =>
+  apiFetch(`/rooms/${roomId}/invitations`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username }) });
 
-export async function acceptInvitation(roomId) {
-  const res = await fetch(`${BASE}/${roomId}/invitations/accept`, { method: 'POST' });
-  if (!res.ok) throw new Error((await res.json()).error);
-}
+export const acceptInvitation = (roomId) => apiFetch(`/rooms/${roomId}/invitations/accept`, { method: 'POST' });

@@ -66,12 +66,36 @@ Tests use Testcontainers — Docker must be running. No other setup needed.
 > ryuk.disabled=true
 > ```
 
-### Frontend
+### Frontend (unit tests)
 
 ```bash
 cd frontend
 npm install
 npm test
+```
+
+### Frontend (E2E tests with Playwright)
+
+Requires the full stack running (`docker compose up`).
+
+```bash
+cd frontend
+npm install
+npx playwright install chromium
+npx playwright test
+```
+
+Results summary: 78 active tests (77 passing + 1 skipped for unimplemented emoji picker), 1 retry configured for infrastructure flakiness under parallel load.
+
+To run a specific spec file:
+```bash
+npx playwright test e2e/auth.spec.ts
+```
+
+To run with the HTML report:
+```bash
+npx playwright test --reporter=html
+npx playwright show-report
 ```
 
 ## Password Reset API (Phase 7)
