@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { flushSync } from 'react-dom';
 import { login as apiLogin, logout as apiLogout, register as apiRegister, getMe } from '../api/auth';
+import { getAccessToken, getRefreshToken } from '../api/tokenStorage';
 
 const AuthContext = createContext(null);
 
@@ -8,8 +9,11 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [authChecked, setAuthChecked] = useState(false);
 
-  // On mount, validate session via cookies — works across tabs without re-login
   useEffect(() => {
+    if (!getAccessToken() && !getRefreshToken()) {
+      setAuthChecked(true);
+      return;
+    }
     getMe()
       .then(setUser)
       .catch(() => {})

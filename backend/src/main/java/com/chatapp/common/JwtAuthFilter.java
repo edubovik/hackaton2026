@@ -44,6 +44,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     }
 
     private Optional<String> extractToken(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return Optional.of(authHeader.substring(7));
+        }
         if (request.getCookies() == null) return Optional.empty();
         return Arrays.stream(request.getCookies())
                 .filter(c -> "access_token".equals(c.getName()))

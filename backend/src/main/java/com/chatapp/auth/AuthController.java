@@ -31,28 +31,36 @@ public class AuthController {
     }
 
     @PostMapping("/auth/login")
-    public ResponseEntity<Void> login(@RequestBody LoginRequest req,
-                                       HttpServletRequest httpReq,
-                                       HttpServletResponse httpRes) {
+    public ResponseEntity<TokenResponse> login(@RequestBody LoginRequest req,
+                                               HttpServletRequest httpReq,
+                                               HttpServletResponse httpRes) {
         AuthService.LoginResult result = authService.login(req, httpReq);
         cookieHelper.setAccessCookie(httpRes, result.accessToken());
         cookieHelper.setRefreshCookie(httpRes, result.refreshToken(), result.refreshTtlSeconds());
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(new TokenResponse(result.accessToken(), result.refreshToken()));
     }
 
     @PostMapping("/auth/refresh")
-    public ResponseEntity<Void> refresh(HttpServletRequest httpReq, HttpServletResponse httpRes) {
-        String refreshToken = cookieHelper.readCookie(httpReq, TokenCookieHelper.REFRESH_COOKIE)
-                .orElseThrow(() -> new UnauthorizedException("No refresh token"));
+    public ResponseEntity<TokenResponse> refresh(@RequestBody(required = false) RefreshRequest body,
+                                                 HttpServletRequest httpReq,
+                                                 HttpServletResponse httpRes) {
+        String refreshToken = (body != null && body.refreshToken() != null)
+                ? body.refreshToken()
+                : cookieHelper.readCookie(httpReq, TokenCookieHelper.REFRESH_COOKIE)
+                        .orElseThrow(() -> new UnauthorizedException("No refresh token"));
         String newAccessToken = authService.refresh(refreshToken);
         cookieHelper.setAccessCookie(httpRes, newAccessToken);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(new TokenResponse(newAccessToken, null));
     }
 
     @PostMapping("/auth/logout")
-    public ResponseEntity<Void> logout(HttpServletRequest httpReq, HttpServletResponse httpRes) {
-        cookieHelper.readCookie(httpReq, TokenCookieHelper.REFRESH_COOKIE)
-                .ifPresent(authService::logout);
+    public ResponseEntity<Void> logout(@RequestBody(required = false) RefreshRequest body,
+                                       HttpServletRequest httpReq,
+                                       HttpServletResponse httpRes) {
+        String refreshToken = (body != null && body.refreshToken() != null)
+                ? body.refreshToken()
+                : cookieHelper.readCookie(httpReq, TokenCookieHelper.REFRESH_COOKIE).orElse(null);
+        if (refreshToken != null) authService.logout(refreshToken);
         cookieHelper.clearAuthCookies(httpRes);
         return ResponseEntity.noContent().build();
     }

@@ -1,16 +1,21 @@
 import { apiFetch } from './http';
+import { storeTokens, getRefreshToken, clearSessionTokens } from './tokenStorage';
 
 export const register = (email, username, password) =>
   apiFetch('/auth/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, username, password }) });
 
-export const login = (email, password, keepMeSignedIn) =>
-  apiFetch('/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password, keepMeSignedIn }) });
+export const login = async (email, password, keepMeSignedIn) => {
+  const data = await apiFetch('/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password, keepMeSignedIn }) });
+  storeTokens(data.accessToken, data.refreshToken, keepMeSignedIn);
+};
 
-export const logout = () =>
-  apiFetch('/auth/logout', { method: 'POST' });
-
-export const refresh = () =>
-  apiFetch('/auth/refresh', { method: 'POST' });
+export const logout = async () => {
+  const refreshToken = getRefreshToken();
+  if (refreshToken) {
+    await apiFetch('/auth/logout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ refreshToken }) }).catch(() => {});
+  }
+  clearSessionTokens();
+};
 
 export const getSessions = () => apiFetch('/auth/sessions');
 

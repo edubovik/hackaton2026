@@ -1,4 +1,5 @@
 import { Client } from '@stomp/stompjs';
+import { getAccessToken, getRefreshToken, storeTokens } from './tokenStorage';
 
 let client = null;
 let connected = false;
@@ -9,21 +10,38 @@ function setConnected(value) {
   connectionListeners.forEach((cb) => cb(value));
 }
 
-// Derive WebSocket URL from the current page origin so the connection goes
-// through the Nginx proxy (/ws → backend:8080) and avoids cross-origin rejection.
 const proto = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-const WS_URL = import.meta.env.VITE_WS_URL || `${proto}//${window.location.host}/ws`;
+const WS_BASE = import.meta.env.VITE_WS_URL || `${proto}//${window.location.host}/ws`;
+
+function getWsUrl() {
+  const token = getAccessToken();
+  return token ? `${WS_BASE}?token=${encodeURIComponent(token)}` : WS_BASE;
+}
+
+async function refreshBeforeConnect() {
+  const refreshToken = getRefreshToken();
+  if (!refreshToken) return;
+  try {
+    const res = await fetch('/api/v1/auth/refresh', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refreshToken }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      storeTokens(data.accessToken, null, false);
+      if (client) client.brokerURL = getWsUrl();
+    }
+  } catch (_) {}
+}
 
 export function connect() {
   if (client) return;
   client = new Client({
-    brokerURL: WS_URL,
+    brokerURL: getWsUrl(),
     reconnectDelay: 5000,
-    // Refresh the access-token cookie before every connect/reconnect so the
-    // WebSocket handshake always has a valid token (access tokens expire in 15 min).
-    beforeConnect: async () => {
-      await fetch('/api/v1/auth/refresh', { method: 'POST', credentials: 'include' }).catch(() => {});
-    },
+    beforeConnect: refreshBeforeConnect,
     onConnect: () => setConnected(true),
     onDisconnect: () => setConnected(false),
     onStompError: () => setConnected(false),

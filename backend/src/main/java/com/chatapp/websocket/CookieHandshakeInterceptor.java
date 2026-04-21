@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 @Component
@@ -14,6 +16,17 @@ public class CookieHandshakeInterceptor implements HandshakeInterceptor {
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response,
                                    WebSocketHandler wsHandler, Map<String, Object> attributes) {
+        String query = request.getURI().getQuery();
+        if (query != null) {
+            for (String param : query.split("&")) {
+                if (param.startsWith("token=")) {
+                    String raw = param.substring("token=".length());
+                    try { raw = URLDecoder.decode(raw, StandardCharsets.UTF_8); } catch (Exception ignored) {}
+                    attributes.put("access_token", raw);
+                    return true;
+                }
+            }
+        }
         String cookieHeader = request.getHeaders().getFirst("Cookie");
         if (cookieHeader != null) {
             for (String part : cookieHeader.split(";")) {
