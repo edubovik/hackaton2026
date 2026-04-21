@@ -185,7 +185,7 @@ export default function ChatPage() {
               className={`${styles.sideItem} ${styles.sideItemFlat} ${selectedFriend?.userId === f.userId ? styles.active : ''}`}
               onClick={() => { setSelectedFriend(f); setSelectedRoom(null); setShowContacts(false); }}
             >
-              <PresenceIndicator state={presenceMap[f.userId] ?? 'OFFLINE'} />
+              <PresenceIndicator state={presenceMap[f.userId] ?? f.presence ?? 'OFFLINE'} />
               <span className={styles.sideItemName}>{f.username}</span>
               <UnreadBadge count={getCountForDm(f.userId)} />
             </button>
