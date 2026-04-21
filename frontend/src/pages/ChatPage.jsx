@@ -40,7 +40,7 @@ export default function ChatPage() {
   });
   const presenceMap = usePresence();
 
-  const { messages, hasMore, loading, loadMore } = useMessages({
+  const { messages, hasMore, loading, loadMore, upsertMessage } = useMessages({
     roomId,
     partnerId,
     currentUserId: user?.id,
@@ -212,7 +212,7 @@ export default function ChatPage() {
               currentUserId={user?.id}
               isRoomAdmin={isAdminOrOwner}
               onReply={setReplyTo}
-              onMessageUpdated={() => {}}
+              onMessageUpdated={upsertMessage}
             />
             <MessageComposer
               onSend={handleSend}

@@ -62,5 +62,5 @@ export function useMessages({ roomId, partnerId, currentUserId }) {
     if (!loading && hasMore) loadHistory(oldestIdRef.current);
   }, [loading, hasMore, loadHistory]);
 
-  return { messages, hasMore, loading, loadMore };
+  return { messages, hasMore, loading, loadMore, upsertMessage };
 }

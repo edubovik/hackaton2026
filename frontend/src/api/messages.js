@@ -7,7 +7,7 @@ export const fetchDmHistory = (partnerId, before) =>
   apiFetch(`/messages/dm/${partnerId}${before ? `?before=${before}` : ''}`);
 
 export const editMessage = (id, content) =>
-  apiFetch(`/messages/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ content }) });
+  apiFetch(`/messages/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ content }) });
 
 export const deleteMessage = (id) =>
   apiFetch(`/messages/${id}`, { method: 'DELETE' });
