@@ -64,9 +64,14 @@ public class ContactService {
             throw new BadRequestException("Already friends");
         }
 
-        // Remove any old non-pending request so the UNIQUE constraint allows a new INSERT
+        // Remove any old non-pending request so the UNIQUE constraint allows a new INSERT.
+        // flush() is required: without it Hibernate batches DELETE + INSERT in the same flush
+        // and may execute INSERT before DELETE, violating the unique constraint.
         friendRequestRepository.findByFromUser_IdAndToUser_Id(from.getId(), to.getId())
-                .ifPresent(friendRequestRepository::delete);
+                .ifPresent(r -> {
+                    friendRequestRepository.delete(r);
+                    friendRequestRepository.flush();
+                });
 
         FriendRequest request = friendRequestRepository.save(new FriendRequest(from, to, message));
 
