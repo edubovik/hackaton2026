@@ -53,12 +53,24 @@ src/
 - Auth state managed via React Context
 - On 401 response → attempt token refresh → retry → redirect to login
 
-## Testing
+## Testing (unit)
 
 - Vitest + React Testing Library for all component tests
 - Test files colocated: `ComponentName.test.jsx` next to `ComponentName.jsx`
 - Use `screen` queries, not `container` queries
 - Prefer `getByRole` over `getByText` where possible
+
+## E2E Testing (Playwright)
+
+- Config: `playwright.config.ts` — Chromium only, baseURL `http://localhost:3000`, 1 retry
+- Specs in `e2e/` — TypeScript, one file per feature area
+- Shared helpers in `e2e/helpers.ts`: `uniqueUser`, `registerAndSignIn`, `createRoom`, `enterRoom`, `waitForComposer`
+- `waitForComposer` checks textarea `[placeholder="Type a message…"]` (not Send button — disabled when empty)
+- Room catalog has pagination: always search by name before clicking Join, then `await page.waitForURL('/')`
+- CSS Modules produce hashed class names — use role/text/placeholder selectors, never `.className`
+- Strict mode: when a locator matches multiple elements, use `.first()` or scope with a parent locator
+- DM unread badge only updates on page reload (by design); reload the page, then wait for friend in sidebar before asserting the badge
+- After `sendRequest(page, username)`, the helper waits for the input to clear before returning — signals API completed
 
 ## Styling
 
