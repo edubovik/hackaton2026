@@ -63,7 +63,7 @@ class ContactServiceTest {
     void sendRequest_duplicate_throwsBadRequest() {
         when(userRepository.findByUsername("bob")).thenReturn(Optional.of(bob));
         when(userBanRepository.existsByBannerIdAndBannedId(bob.getId(), alice.getId())).thenReturn(false);
-        when(friendRequestRepository.findByFromUser_IdAndToUser_Id(alice.getId(), bob.getId()))
+        when(friendRequestRepository.findPendingBetween(alice.getId(), bob.getId()))
                 .thenReturn(Optional.of(new FriendRequest(alice, bob, null)));
 
         assertThatThrownBy(() -> service.sendRequest(alice, "bob", null))
