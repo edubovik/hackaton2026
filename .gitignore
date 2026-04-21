@@ -1,5 +1,4 @@
-# Environment
-.env
+# Environment (intentionally tracked — demo repo with placeholder credentials)
 
 # Java / Maven
 *.class
