@@ -128,14 +128,7 @@ public class MessageService {
 
     @Transactional
     public void incrementRoomUnread(Long roomId, Long senderId) {
-        roomMemberRepository.findByRoom_Id(roomId).forEach(member -> {
-            Long userId = member.getUser().getId();
-            if (userId.equals(senderId)) return;
-            UnreadCount uc = unreadCountRepository.findByUserIdAndRoomId(userId, roomId)
-                    .orElseGet(() -> unreadCountRepository.save(UnreadCount.forRoom(userId, roomId)));
-            uc.increment();
-            unreadCountRepository.save(uc);
-        });
+        unreadCountRepository.bulkIncrementRoomUnread(roomId, senderId);
     }
 
     @Transactional
