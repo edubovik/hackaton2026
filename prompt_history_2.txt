@@ -1,0 +1,43 @@
+Prompt History — Session 2026-04-20 / 2026-04-22
+Commit reference: feat: phase 2 — user presence & WebSocket infrastructure (1776687010000)
+================================================================================
+
+[1]
+The ## Phase 2 section from PHASES.md
+backend/CLAUDE.md
+frontend/CLAUDE.md
+
+[2]
+yes
+
+[3]
+yes
+
+[4]
+[Request interrupted by user for tool use]
+continue
+
+[5]
+commit and push
+
+[6]
+export my prompts as a txt file, include date and time
+
+[7]
+update name to following format prompt_date_timeinmillisofthefirstprompt.
+
+[8]
+check this chat window to get time of the first prompt
+
+[9]
+use the commit datetime
+
+[10]
+rename file to prompt_history_1
+[Request interrupted by user]
+rename file to prompt_history_3
+
+[11]
+Export my prompts to txt file with name prompt_history_2
+
+================================================================================

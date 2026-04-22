@@ -1,0 +1,56 @@
+Session date: 2026-04-21 / 2026-04-22
+First prompt timestamp: 2026-04-21T06:59:52.577Z (1776754792577 ms)
+Exported: 2026-04-22
+Project: hackaton2026
+
+================================================================================
+
+[2026-04-21]
+
+1. Read CLAUDE.md, REQUIREMENTS.md, backend/CLAUDE.md, and frontend/CLAUDE.md before
+   doing anything else. We are running a full test suite across the entire application
+   (backend unit, integration, frontend unit RTL, frontend E2E Playwright) and fixing
+   all failures before reporting all-green. Then push the passing commit after approval.
+
+2. approve
+
+3. push
+
+4. When trying to send invite to user with username test2 from user test1 it returns
+   {"error":"Internal server error"}. Check it please and propose plan
+
+5. yes, besides test1 and test2 users have the same password of Password01
+
+6. commit
+
+7. now adding test1 from test2 leads to 409 Duplicate or conflicting entry.
+
+8. commit
+
+9. validate online offline status functionality. test and propose plan if it doesn't
+   work properly
+
+10. approve
+
+11. commit
+
+================================================================================
+
+[2026-04-22]
+
+12. when there are two sessions of the same user sometime the message doesn't appear
+    after send. so Lets imagine test1 user has opened tab 1 and tab 2. He switches to
+    tab 2 and post the message. This message appears in tab1 and doesnt appear in tab2.
+    message appearas in tab2 After page reload
+
+13. push
+
+14. export my prompts as a txt file, include date and time
+
+15. update name to following format prompt_date_timeinmillisofthefirstprompt.
+
+16. rename file to prompt_history_12
+
+17. Export my prompts to txt file with name prompt_history_11
+
+================================================================================

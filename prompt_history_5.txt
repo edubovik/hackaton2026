@@ -1,0 +1,7 @@
+Session exported: 2026-04-22
+
+--- User Prompts ---
+
+1. rename file to prompt_history_6
+
+2. Export my prompts to txt file with name prompt_history_5

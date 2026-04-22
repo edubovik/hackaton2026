@@ -1,0 +1,50 @@
+Exported prompts — 2026-04-22
+============================================================
+
+Session 1 — 2026-04-21
+------------------------------------------------------------
+
+[1] Read CLAUDE.md, REQUIREMENTS.md, and frontend/CLAUDE.md before doing anything else.
+    We need to implement one specific fix: browser tab session isolation per REQUIREMENTS.md
+    §2.2.3 and §2.2.4. Audit the current implementation, propose a fix plan, and implement
+    after approval.
+
+[2] commit but don't push
+
+[3] first of all I have a bug with continuous page refresh on sign in screen
+
+[4] I need the tab isolation feature to be working properly. That means that I can have
+    new session for the same user when I open the new tab in the same browser window
+
+[5] approve
+
+[6] http://localhost:3000/api/v1/users/me on sign in screen returns 401, do we need this
+    call there?
+
+[7] good, I am still cannot have 2 separate sessions within same browser page but 2
+    different tabs. on screen shots there is a current behaviour
+
+[8] commit and push
+
+[9] Unban functionality is missing
+
+[10] I have friend request already sent error
+
+[11] I am getting internal server error
+
+Session 2 — 2026-04-22
+------------------------------------------------------------
+
+[12] push
+
+[13] Make room name in the rooms under room caltalog tab white
+
+[14] commit
+
+[15] export my prompts as a txt file, include date and time
+
+[16] update name to following format prompt_date_timeinmillisofthefirstprompt.
+
+[17] rename file to prompt_history_11
+
+[18] Export my prompts to txt file with name prompt_history_10
