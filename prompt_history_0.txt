@@ -1,0 +1,127 @@
+Prompt History Export
+Session: hackaton2026 — Phase 0
+Date: 2026-04-20 / 2026-04-22
+================================================================================
+
+[2026-04-20] PROMPT 1
+--------------------------------------------------------------------------------
+Read CLAUDE.md and REQUIREMENTS.md carefully before doing anything else. Take
+your time — these are the only source of truth for this project.
+
+Once you have read both files, do the following:
+
+1. Summarize what we are building in 3-5 sentences so I can confirm your
+   understanding.
+
+2. Propose a phased implementation plan. Each phase must:
+   - Be independently runnable and testable
+   - Have a clear definition of done
+   - Include what tests will be written
+
+3. List any assumptions you are making that are not covered in the documents.
+
+Do not write any code yet. Wait for my approval of the plan.
+
+---
+
+Once I approve the plan, we will work phase by phase.
+
+For each phase:
+- Present a detailed plan for that phase before writing any code
+- Wait for my approval of the phase plan
+- Implement it fully
+- Write tests and run them — all must pass
+- As part of Phase 1 specifically: create backend/CLAUDE.md and
+  frontend/CLAUDE.md with conventions specific to each layer, derived from
+  the root CLAUDE.md
+- When done, summarize what was built and confirm all tests pass
+- Wait for my explicit approval before committing
+- After approval, commit with: feat: phase X — description
+- Then stop and wait for me to initiate the next phase
+
+Never move to the next phase without my explicit instruction.
+
+[2026-04-20] PROMPT 2
+--------------------------------------------------------------------------------
+1. yes
+2. yes
+3. Did you consider ttls for users that haven't provide any activities more
+   then 1 day.
+
+[2026-04-20] PROMPT 3
+--------------------------------------------------------------------------------
+no, my assumption was that queue should purge messages after the right period
+of time of no activity. let's say 1 day
+
+[2026-04-20] PROMPT 4
+--------------------------------------------------------------------------------
+yes, go ahead
+
+[2026-04-20] PROMPT 5
+--------------------------------------------------------------------------------
+I need to have an option to do it in parallel. So I can open new chat window
+and provide a chunk of the context that would be enough to complete the phase
+or task. I assume the very first phase should be phase 0 where you will create
+project skeleton. commit it. create all required files such as CLAUDE.md and
+REQUIREMENTS.md.
+
+[2026-04-20] PROMPT 6
+--------------------------------------------------------------------------------
+present detailed Phase 0
+
+[2026-04-20] PROMPT 7
+--------------------------------------------------------------------------------
+approved
+
+[2026-04-20] PROMPT 8
+--------------------------------------------------------------------------------
+add presise versions for the dependencies
+[tool rejection — requested pinned dependency versions in pom.xml]
+
+[2026-04-20] PROMPT 9
+--------------------------------------------------------------------------------
+approved
+
+[2026-04-20] PROMPT 10
+--------------------------------------------------------------------------------
+I am using Colima so docker can be run there
+[tool rejection — clarified Docker runtime]
+
+[2026-04-20] PROMPT 11
+--------------------------------------------------------------------------------
+approved
+
+[2026-04-22] PROMPT 12
+--------------------------------------------------------------------------------
+show ~/.testcontainers.properties
+
+[2026-04-22] PROMPT 13
+--------------------------------------------------------------------------------
+approved
+
+[2026-04-22] PROMPT 14
+--------------------------------------------------------------------------------
+export my prompts as a txt file, include date and time
+
+[2026-04-22] PROMPT 15
+--------------------------------------------------------------------------------
+update name to following format prompt_date_timeinmillisofthefirstprompt.
+
+[2026-04-22] PROMPT 16
+--------------------------------------------------------------------------------
+rename file to prompt_history_1
+
+[2026-04-22] PROMPT 17
+--------------------------------------------------------------------------------
+Export my prompts to txt file with name prompt_history_0
+
+[2026-04-22] PROMPT 18
+--------------------------------------------------------------------------------
+Export my prompts to txt file with name prompt_history_1
+
+[2026-04-22] PROMPT 19
+--------------------------------------------------------------------------------
+Export my prompts to txt file with name prompt_history_0
+
+================================================================================
+End of export

@@ -1,0 +1,22 @@
+Prompt History — Session 2026-04-20 / 2026-04-22
+==================================================
+
+[2026-04-20] The ## Phase 4 section from PHASES.md
+backend/CLAUDE.md
+frontend/CLAUDE.md
+
+[2026-04-20] approve
+
+[2026-04-20] commit and push
+
+[2026-04-22] export my prompts as a txt file, include date and time
+
+[2026-04-22] update name to following format prompt_date_timeinmillisofthefirstprompt.
+
+[2026-04-22] rename file to prompt_history_5
+
+[2026-04-22] rename file to prompt_history_1
+
+[2026-04-22] rename file to prompt_history_5
+
+[2026-04-22] Export my prompts to txt file with name prompt_history_4

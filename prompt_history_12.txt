@@ -1,0 +1,193 @@
+Prompt History Export
+Session: hackaton2026
+Date: 2026-04-22
+================================================================================
+PROMPT 0
+
+Read CLAUDE.md and REQUIREMENTS.md before doing anything else.
+Pay special attention to section 3.1 (Capacity and Scale) and 3.2 (Performance).
+
+We need to verify the app supports 300 concurrent users as required.
+This is a full user simulation load test — not just connections.
+
+---
+
+STEP 1 — TOOL SELECTION:
+
+Propose the best load testing tool for this stack (Spring Boot + WebSocket + 
+RabbitMQ + React). Consider:
+- Must support WebSocket (STOMP)
+- Must support HTTP REST (login, registration)
+- Must be runnable from the command line without a GUI
+- Must produce a clear report with response times, error rates, throughput
+
+Recommend one tool with a short justification.
+Wait for my approval before proceeding.
+
+---
+
+STEP 2 — SETUP:
+
+1. Create a dedicated folder: load-tests/ in the project root
+2. Install and configure the chosen tool
+3. Add load-tests/README.md explaining how to run the tests
+4. Present the setup plan before writing any scripts
+   Wait for my approval.
+
+---
+
+STEP 3 — TEST SCENARIO DESIGN:
+
+Design a realistic full user simulation scenario. Each virtual user must:
+
+  1. Register a unique account (or use a pre-created test account)
+  2. Sign in and obtain a JWT token
+  3. Connect to WebSocket using STOMP
+  4. Join one public chat room
+  5. Send a message every 10-15 seconds (randomized)
+  6. Receive messages from other virtual users in the same room
+  7. Update presence status (simulate activity / idle)
+  8. Stay connected for the duration of the test
+
+Load profile:
+  - Ramp up: 0 → 300 users over 2 minutes
+  - Sustained load: 300 concurrent users for 5 minutes
+  - Ramp down: 300 → 0 over 1 minute
+  - Total test duration: ~8 minutes
+
+Present the scenario design before writing any scripts.
+Wait for my approval.
+
+---
+
+STEP 4 — IMPLEMENT THE LOAD TEST:
+
+Once scenario is approved, implement the test scripts.
+
+The scripts must:
+- Use unique usernames/emails per virtual user (e.g. loadtest_user_001)
+- Pre-create 300 test users via a setup script before the test runs
+- Clean up test users after the test via a teardown script
+- Handle JWT token auth on all REST calls after login
+- Handle STOMP connection with JWT token
+
+Folder structure:
+  load-tests/
+  ├── README.md
+  ├── setup.js (or .sh) — creates 300 test users
+  ├── teardown.js (or .sh) — removes test users
+  └── scenario.js (or .yml) — main load test script
+
+Present the scripts before running them.
+Wait for my approval.
+
+---
+
+STEP 5 — BASELINE RUN (smoke):
+
+Before the full 300-user test, run a small smoke test:
+- 10 concurrent users
+- 2 minutes duration
+- Confirm the scenario works end to end with no errors
+
+Report:
+- All 10 users logged in successfully
+- WebSocket connections established
+- Messages sent and received
+- No errors or timeouts
+
+Fix any issues before proceeding to the full run.
+
+---
+
+STEP 6 — FULL LOAD TEST (300 users):
+
+Run the full load test with 300 concurrent users.
+
+During the test, monitor:
+  - RabbitMQ queue depth (localhost:15672)
+  - Backend logs for errors or warnings
+  - Docker stats: `docker stats` for CPU and memory
+
+After the test, report these metrics clearly:
+
+  CONNECTIONS:
+  - Peak concurrent WebSocket connections
+  - Connection success rate (target: 100%)
+  - Connection error rate (target: 0%)
+
+  MESSAGING:
+  - Total messages sent
+  - Total messages delivered
+  - Message delivery rate (target: 100%)
+  - Average message delivery time (target: under 3 seconds per REQUIREMENTS.md)
+  - p95 message delivery time
+  - p99 message delivery time
+
+  REST API:
+  - Login success rate (target: 100%)
+  - Average login response time
+  - p95 / p99 response times
+
+  PRESENCE:
+  - Presence update propagation time (target: under 2 seconds per REQUIREMENTS.md)
+
+  SYSTEM:
+  - Peak CPU usage per service
+  - Peak memory usage per service
+  - RabbitMQ peak queue depth
+
+  ERRORS:
+  - List any errors, timeouts, or dropped connections
+
+---
+
+STEP 7 — REQUIREMENTS VERDICT:
+
+Cross-check results against REQUIREMENTS.md section 3.1 and 3.2:
+
+  ✅ / ❌  Supports 300 simultaneous users
+  ✅ / ❌  Message delivery within 3 seconds
+  ✅ / ❌  Presence updates within 2 seconds
+  ✅ / ❌  No dropped connections under sustained load
+
+If any target is missed:
+- Identify the bottleneck (backend, WebSocket layer, RabbitMQ, database)
+- Propose a fix
+- Wait for my approval before making any changes
+- Re-run the test after the fix to confirm improvement
+
+---
+
+RULES:
+- Do not run the full 300-user test until the smoke test passes cleanly
+- Do not modify application code during the test without my approval
+- Always run setup script before and teardown script after each test run
+- Save the full test report to load-tests/reports/report-<timestamp>.json
+- Do not commit load test results — only commit the scripts and README
+- Wait for my approval before committing with:
+  feat: add load tests for 300 concurrent users
+
+
+
+
+
+[2026-04-22] PROMPT 1
+--------------------------------------------------------------------------------
+rename file to prompt_history_13
+
+[2026-04-22] PROMPT 2
+--------------------------------------------------------------------------------
+Export my prompts to txt file with name prompt_history_12
+
+[2026-04-22] PROMPT 3
+--------------------------------------------------------------------------------
+Export my prompts to txt file with name prompt_history_12
+
+[2026-04-22] PROMPT 4
+--------------------------------------------------------------------------------
+Export my prompts to txt file with name prompt_history_12
+
+[2026-04-22] PROMPT 5
+--------------------------------------------------------------------------------
+Export my prompts from this chat window and not from the project to txt file with name prompt_history_12
